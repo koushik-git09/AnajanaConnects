@@ -1,0 +1,77 @@
+export const staff = [
+  {
+    id: "EMP001",
+    name: "Ravi Kumar",
+    role: "Delivery Staff",
+    status: "Active",
+    initials: "RK",
+    color: "clay",
+  },
+  {
+    id: "EMP002",
+    name: "Kumar S",
+    role: "Delivery Staff",
+    status: "Active",
+    initials: "KS",
+    color: "sage",
+  },
+  {
+    id: "EMP003",
+    name: "Suresh Babu",
+    role: "Office Assistant",
+    status: "Active",
+    initials: "SB",
+    color: "blue",
+  },
+  {
+    id: "EMP004",
+    name: "Arun Prakash",
+    role: "Driver",
+    status: "On leave",
+    initials: "AP",
+    color: "gold",
+  },
+  {
+    id: "EMP005",
+    name: "Meena Devi",
+    role: "Accounts",
+    status: "Active",
+    initials: "MD",
+    color: "plum",
+  },
+]
+
+export const salaryRecords = [
+  {
+    name: "Ravi Kumar",
+    id: "EMP001",
+    net: "₹13,500",
+    base: "₹15,000",
+    detail: "25 present · 3 absent",
+    color: "clay",
+  },
+  {
+    name: "Kumar S",
+    id: "EMP002",
+    net: "₹14,000",
+    base: "₹15,000",
+    detail: "26 present · 2 absent",
+    color: "sage",
+  },
+  {
+    name: "Suresh Babu",
+    id: "EMP003",
+    net: "₹16,250",
+    base: "₹17,500",
+    detail: "25 present · 2 absent",
+    color: "blue",
+  },
+  {
+    name: "Arun Prakash",
+    id: "EMP004",
+    net: "₹12,600",
+    base: "₹14,000",
+    detail: "24 present · 2 leave",
+    color: "gold",
+  },
+]

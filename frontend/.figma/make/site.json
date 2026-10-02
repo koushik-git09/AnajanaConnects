@@ -1,0 +1,10 @@
+{
+  "description": "Manage staff, attendance, and salary effortlessly with a user-friendly app designed for gas agency owners, ensuring clarity and reliability in operations.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

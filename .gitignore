@@ -1,0 +1,50 @@
+# Environment and Secrets
+.env
+.env.*
+!.env.example
+secrets/
+credentials/
+
+# Python
+.venv/
+*/.venv/
+__pycache__/
+*/__pycache__/
+*/**/__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+*.egg-info/
+
+# Frontend & Node
+node_modules/
+*/node_modules/
+dist/
+*/dist/
+build/
+*/build/
+.cache/
+*/.cache/
+.vite/
+*/.vite/
+*.tsbuildinfo
+*.log
+*-debug.log*
+.tmp-*
+
+# Figma export scratch / artifacts
+.figma/design-context/
+frontend/.figma/design-context/
+.claude-replay.*
+
+# IDE & Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Operating System
+.DS_Store
+Thumbs.db
+desktop.ini
