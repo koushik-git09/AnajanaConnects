@@ -13,43 +13,59 @@ export default function Salary() {
   const [selected, setSelected] = useState<typeof salaryRecords[number] | null>(
     null,
   )
+
   return (
     <main className="screen">
       <ScreenTitle
-        eyebrow="Payroll"
-        action={<IconButton icon="download" label="Download report" />}
+        eyebrow="Financial Operations"
+        action={<IconButton icon="download" label="Export payroll register (PDF/CSV)" />}
       >
-        Salary
+        Agency Payroll
       </ScreenTitle>
-      <button className="month-picker">
-        <Icon name="calendar" />
+
+      {/* Month Selector */}
+      <button className="month-picker" type="button" aria-label="Select payroll month">
+        <Icon name="calendar" size={18} />
         <span>September 2026</span>
         <Icon name="chevron" size={17} />
       </button>
+
+      {/* Hero Net Salary Command Card */}
       <section className="payroll-hero">
-        <p>Net payable</p>
+        <p>Total Net Payable</p>
         <h2>₹2,22,500</h2>
         <div>
           <span>
-            <small>Gross salary</small>
+            <small>Gross Salary</small>
             <strong>₹2,35,000</strong>
           </span>
           <span>
-            <small>Deductions</small>
+            <small>Absence Deductions</small>
             <strong>₹12,500</strong>
           </span>
         </div>
-        <Button variant="secondary" block icon="check">
-          Review payroll
+        <Button
+          variant="secondary"
+          block
+          icon="check"
+        >
+          Verify & Approve Payroll
         </Button>
       </section>
+
+      {/* Staff Payroll Register */}
       <div className="section-heading salary-heading">
-        <h2>Employee salaries</h2>
-        <Pill tone="neutral">25 employees</Pill>
+        <h2>Employee Salaries</h2>
+        <Pill tone="neutral">25 Staff Members</Pill>
       </div>
+
       <section className="salary-list">
         {salaryRecords.map((record) => (
-          <button key={record.id} onClick={() => setSelected(record)}>
+          <button
+            key={record.id}
+            onClick={() => setSelected(record)}
+            type="button"
+          >
             <span className={`initial-avatar ${record.color}`}>
               {record.name
                 .split(" ")
@@ -63,12 +79,14 @@ export default function Salary() {
             </span>
             <span className="salary-amount">
               <strong>{record.net}</strong>
-              <small>Net salary</small>
+              <small>Net Payable</small>
             </span>
             <Icon name="chevron" size={17} />
           </button>
         ))}
       </section>
+
+      {/* Itemized Payslip Sheet / Modal */}
       {selected && (
         <Sheet onClose={() => setSelected(null)}>
           <div className="salary-detail-head">
@@ -80,53 +98,66 @@ export default function Salary() {
                 .slice(0, 2)}
             </span>
             <div>
-              <p className="eyebrow">September 2026</p>
+              <p className="eyebrow">Salary Slip · September 2026</p>
               <h2>{selected.name}</h2>
-              <p>{selected.id}</p>
+              <p>{selected.id} · HP Gas Staff</p>
             </div>
           </div>
+
           <div className="salary-breakdown">
             <p>
-              <span>Base salary</span>
+              <span>Base Monthly Salary</span>
               <strong>{selected.base}</strong>
             </p>
             <hr />
             <p>
-              <span>Present days</span>
-              <strong>25</strong>
+              <span>Days Present</span>
+              <strong>25 Days</strong>
             </p>
             <p>
-              <span>Absent days</span>
-              <strong>3</strong>
+              <span>Days Absent</span>
+              <strong>3 Days</strong>
             </p>
             <p>
-              <span>Leave days</span>
-              <strong>2</strong>
+              <span>Approved Leave</span>
+              <strong>2 Days</strong>
             </p>
             <p>
-              <span>Half days</span>
-              <strong>0</strong>
+              <span>Half Days</span>
+              <strong>0 Days</strong>
             </p>
             <hr />
             <p className="deduction">
-              <span>Absence deduction</span>
+              <span>Attendance Deduction (3 days)</span>
               <strong>− ₹1,500</strong>
             </p>
             <p>
-              <span>Other adjustment</span>
+              <span>EPF / ESI Deductions</span>
+              <strong>₹0</strong>
+            </p>
+            <p>
+              <span>Incentives & Allowances</span>
               <strong>₹0</strong>
             </p>
             <div>
-              <span>Net salary</span>
+              <span>Net Salary Payable</span>
               <strong>{selected.net}</strong>
             </div>
           </div>
-          <Button block icon="download">
-            Download salary slip
-          </Button>
-          <Button block variant="ghost" icon="attendance">
-            View attendance
-          </Button>
+
+          <div style={{ display: "grid", gap: "10px" }}>
+            <Button block icon="download">
+              Download Official Pay Slip
+            </Button>
+            <Button
+              block
+              variant="secondary"
+              icon="attendance"
+              onClick={() => setSelected(null)}
+            >
+              Inspect Attendance Log
+            </Button>
+          </div>
         </Sheet>
       )}
     </main>
