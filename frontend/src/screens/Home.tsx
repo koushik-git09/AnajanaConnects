@@ -1,41 +1,96 @@
-import { Button, Icon, IconButton, ScreenTitle } from "../components/ui"
+import { useNavigate, useOutletContext } from "react-router-dom"
+import { Button, Icon, IconButton, LivePulse } from "../components/ui"
+import { useAuth } from "../auth/AuthContext"
 
 export default function Home({
   onNavigate,
   onProfile,
 }: {
-  onNavigate: (page: string) => void
-  onProfile: () => void
-}) {
+  onNavigate?: (page: string) => void
+  onProfile?: () => void
+} = {}) {
+  const navigate = useNavigate()
+  const outlet = useOutletContext<{ onProfile?: () => void } | null>()
+  const { user } = useAuth()
+
+  const handleNavigate = (actionOrTarget: string) => {
+    if (onNavigate) {
+      onNavigate(actionOrTarget)
+      return
+    }
+    if (actionOrTarget === "staff" || actionOrTarget === "staff-add") {
+      navigate("/staff")
+    } else if (actionOrTarget === "attendance" || actionOrTarget === "attendance-manual") {
+      navigate("/attendance")
+    } else if (actionOrTarget === "salary") {
+      navigate("/salary")
+    } else {
+      navigate(`/${actionOrTarget}`)
+    }
+  }
+
+  const handleProfile = () => {
+    if (onProfile) {
+      onProfile()
+    } else if (outlet?.onProfile) {
+      outlet.onProfile()
+    }
+  }
+
+  const firstName = user?.name ? user.name.split(" ")[0] : "Owner"
+  const initials = (user?.name || "Anjana")
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase()
+
+  const todayFormatted = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  })
+
   return (
     <main className="screen home-screen">
+      {/* Top Header Bar */}
       <header className="topbar">
         <div>
-          <p className="muted small">Monday, 28 September</p>
-          <p className="greeting">Good morning, Anjana</p>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "4px" }}>
+            <span className="muted small">{todayFormatted}</span>
+            <LivePulse label="Agency Live" />
+          </div>
+          <p className="greeting">Good morning, {firstName}</p>
         </div>
         <div className="top-actions">
-          <IconButton icon="bell" label="Notifications" />
+          <IconButton icon="bell" label="Operational Notifications" />
           <button
             className="owner-avatar"
-            aria-label="Open profile"
-            onClick={onProfile}
+            aria-label="Open profile settings"
+            onClick={handleProfile}
+            type="button"
           >
-            AN
+            {initials}
           </button>
         </div>
       </header>
 
+      {/* Hero Command Center Card */}
       <section className="hero-attendance">
         <div className="hero-heading">
           <div>
-            <p className="eyebrow">Today’s attendance</p>
-            <h2>21 of 25 staff are in</h2>
+            <p className="eyebrow">
+              <Icon name="flame" size={14} />
+              Today’s Operational Roster
+            </p>
+            <h2>21 of 25 staff on duty</h2>
           </div>
-          <span className="attendance-ring">
+          <div className="attendance-ring" title="84% attendance rate today">
             <strong>84%</strong>
-          </span>
+          </div>
         </div>
+
         <div className="status-grid">
           <div>
             <span className="status-dot success" />
@@ -50,53 +105,60 @@ export default function Home({
           <div>
             <span className="status-dot warning" />
             <strong>1</strong>
-            <p>On leave</p>
+            <p>On Leave</p>
           </div>
         </div>
-        <Button block icon="camera" onClick={() => onNavigate("attendance")}>
-          Take attendance
+
+        <Button
+          block
+          icon="attendance"
+          onClick={() => handleNavigate("attendance")}
+        >
+          Open Attendance Register
         </Button>
       </section>
 
+      {/* Quick Actions Hub */}
       <section className="section">
         <div className="section-heading">
-          <h2>Quick actions</h2>
+          <h2>Quick Actions</h2>
         </div>
         <div className="quick-grid">
-          <button onClick={() => onNavigate("staff-add")}>
+          <button onClick={() => handleNavigate("staff-add")} type="button">
             <span className="quick-icon">
               <Icon name="plus" />
             </span>
-            <span>Add staff</span>
+            <span>Add New Staff</span>
             <Icon name="chevron" size={16} />
           </button>
-          <button onClick={() => onNavigate("attendance-manual")}>
+          <button onClick={() => handleNavigate("attendance-manual")} type="button">
             <span className="quick-icon">
               <Icon name="edit" />
             </span>
-            <span>Mark manually</span>
+            <span>Mark Manually</span>
             <Icon name="chevron" size={16} />
           </button>
         </div>
       </section>
 
+      {/* Current Month Payroll Snapshot */}
       <section className="section month-section">
         <div className="section-heading">
           <div>
-            <p className="eyebrow">September 2026</p>
-            <h2>This month</h2>
+            <p className="eyebrow">Current Payroll Cycle</p>
+            <h2>September 2026 Overview</h2>
           </div>
-          <button className="text-action" onClick={() => onNavigate("salary")}>
-            View salary <Icon name="arrow" size={16} />
+          <button className="text-action" onClick={() => handleNavigate("salary")} type="button">
+            View full payroll <Icon name="arrow" size={15} />
           </button>
         </div>
         <div className="money-row">
           <div>
-            <p>Salary payable</p>
+            <p>Net Salary Payable</p>
             <strong>₹2,22,500</strong>
           </div>
           <div>
-            <p>Deductions</p>
+            <p>Absence Deductions</p>
             <strong>₹12,500</strong>
           </div>
         </div>
@@ -104,15 +166,18 @@ export default function Home({
           <span />
         </div>
         <p className="progress-copy">
-          <span>Payroll ready to review</span>
-          <strong>25 employees</strong>
+          <span>Roster attendance verified for payout</span>
+          <strong>25 Staff Calculated</strong>
         </p>
       </section>
 
+      {/* Live Operational Activity */}
       <section className="section activity-section">
         <div className="section-heading">
-          <h2>Recent activity</h2>
-          <button className="text-action">View all</button>
+          <h2>Recent Activity</h2>
+          <button className="text-action" onClick={() => handleNavigate("reports")} type="button">
+            View all logs
+          </button>
         </div>
         <div className="activity-list">
           <article>
@@ -120,8 +185,8 @@ export default function Home({
               <Icon name="check" size={17} />
             </span>
             <div>
-              <strong>Ravi Kumar checked in</strong>
-              <p>Face attendance · 09:05 AM</p>
+              <strong>Ravi Kumar verified & checked in</strong>
+              <p>Biometric face recognition · 09:05 AM</p>
             </div>
           </article>
           <article>
@@ -129,8 +194,8 @@ export default function Home({
               <Icon name="report" size={17} />
             </span>
             <div>
-              <strong>Salary report generated</strong>
-              <p>September 2026 · Yesterday</p>
+              <strong>Monthly salary register drafted</strong>
+              <p>September 2026 payroll · Yesterday at 06:30 PM</p>
             </div>
           </article>
           <article>
@@ -138,8 +203,8 @@ export default function Home({
               <Icon name="edit" size={17} />
             </span>
             <div>
-              <strong>Attendance was corrected</strong>
-              <p>Kumar S · 27 September</p>
+              <strong>Manual attendance adjustment recorded</strong>
+              <p>Kumar S marked half-day · 27 September</p>
             </div>
           </article>
         </div>

@@ -1,10 +1,34 @@
-import type {
-  ButtonHTMLAttributes,
-  InputHTMLAttributes,
-  ReactNode,
+import {
+  type ButtonHTMLAttributes,
+  type InputHTMLAttributes,
+  type ReactNode,
+  useEffect,
 } from "react"
 
-export type IconName = "home" | "staff" | "attendance" | "salary" | "plus" | "camera" | "search" | "arrow" | "bell" | "more" | "calendar" | "clock" | "check" | "edit" | "download" | "report" | "settings" | "shield" | "chevron" | "phone" | "briefcase" | "logout"
+export type IconName =
+  | "home"
+  | "staff"
+  | "attendance"
+  | "salary"
+  | "plus"
+  | "camera"
+  | "search"
+  | "arrow"
+  | "bell"
+  | "more"
+  | "calendar"
+  | "clock"
+  | "check"
+  | "edit"
+  | "download"
+  | "report"
+  | "settings"
+  | "shield"
+  | "chevron"
+  | "phone"
+  | "briefcase"
+  | "logout"
+  | "flame"
 
 const iconPaths: Record<IconName, ReactNode> = {
   home: (
@@ -57,9 +81,9 @@ const iconPaths: Record<IconName, ReactNode> = {
   ),
   more: (
     <>
-      <circle cx="5" cy="12" r="1" fill="currentColor" stroke="none" />
-      <circle cx="12" cy="12" r="1" fill="currentColor" stroke="none" />
-      <circle cx="19" cy="12" r="1" fill="currentColor" stroke="none" />
+      <circle cx="5" cy="12" r="1.2" fill="currentColor" stroke="none" />
+      <circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none" />
+      <circle cx="19" cy="12" r="1.2" fill="currentColor" stroke="none" />
     </>
   ),
   calendar: (
@@ -117,6 +141,11 @@ const iconPaths: Record<IconName, ReactNode> = {
       <path d="M10 4H5v16h5M14 8l4 4-4 4M8 12h10" />
     </>
   ),
+  flame: (
+    <>
+      <path d="M8.5 14.5A4.5 4.5 0 0 0 13 19a4.5 4.5 0 0 0 4.5-4.5c0-2-1.5-3.5-2.5-4.5-.5-.5-1-1.5-1-2.5 0-.5.2-1 .5-1.5-1.5.5-3 2-3 4 0 .5.2 1 .5 1.5-1 0-3-1-3-3 0-.5.1-1 .3-1.5C7.5 8 6 10 6 12.5c0 .7.1 1.4.5 2z" />
+    </>
+  ),
 }
 
 export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
@@ -137,44 +166,77 @@ export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
   )
 }
 
-export function Logo({ compact = false }: { compact?: boolean }) {
+export function Logo({
+  compact = false,
+  size = "md",
+}: {
+  compact?: boolean
+  size?: "sm" | "md" | "lg"
+}) {
+  const imgSizes = {
+    sm: "32px",
+    md: "40px",
+    lg: "54px",
+  }
+
   return (
     <div className="brand">
       <img
         src="/logo.png"
-        alt="Anjana Connects"
+        alt="Anjana Connects HP Gas Agency"
         className="brand-logo-img"
-        style={{ width: "38px", height: "38px", objectFit: "contain", borderRadius: "8px" }}
+        style={{ width: imgSizes[size], height: imgSizes[size] }}
       />
       {!compact && (
-        <span className="brand-name">
-          Anjana <strong>Connects</strong>
-        </span>
+        <div className="brand-text">
+          <span className="brand-name">
+            Anjana <span>Connects</span>
+          </span>
+          <span className="brand-subtitle">HP Gas Agency</span>
+        </div>
       )}
     </div>
   )
 }
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: "primary" | "secondary" | "ghost" | "soft"
+  variant?: "primary" | "secondary" | "accent" | "ghost" | "soft"
   icon?: IconName
   block?: boolean
+  loading?: boolean
 }
 
 export function Button({
   variant = "primary",
   icon,
   block,
+  loading = false,
   className = "",
   children,
+  disabled,
   ...props
 }: ButtonProps) {
   return (
     <button
       className={`btn btn-${variant} ${block ? "btn-block" : ""} ${className}`}
+      disabled={disabled || loading}
       {...props}
     >
-      {icon && <Icon name={icon} size={18} />}
+      {loading ? (
+        <span
+          style={{
+            width: "16px",
+            height: "16px",
+            border: "2px solid currentColor",
+            borderRightColor: "transparent",
+            borderRadius: "50%",
+            display: "inline-block",
+            animation: "shimmer 0.75s infinite linear",
+          }}
+        />
+      ) : (
+        icon && <Icon name={icon} size={18} />
+      )}
       <span>{children}</span>
     </button>
   )
@@ -187,7 +249,7 @@ export function IconButton({
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & { icon: IconName; label: string }) {
   return (
-    <button className={`icon-btn ${className}`} aria-label={label} {...props}>
+    <button className={`icon-btn ${className}`} aria-label={label} title={label} {...props}>
       <Icon name={icon} />
     </button>
   )
@@ -195,12 +257,18 @@ export function IconButton({
 
 export function Field({
   label,
+  error,
   ...props
-}: InputHTMLAttributes<HTMLInputElement> & { label: string }) {
+}: InputHTMLAttributes<HTMLInputElement> & { label: string; error?: string }) {
   return (
     <label className="field">
       <span>{label}</span>
       <input {...props} />
+      {error && (
+        <span style={{ color: "var(--status-absent)", fontSize: "11px", marginTop: "2px" }}>
+          {error}
+        </span>
+      )}
     </label>
   )
 }
@@ -239,9 +307,11 @@ export function Avatar({
     .map((part) => part[0])
     .join("")
     .slice(0, 2)
+    .toUpperCase()
+
   return (
     <span className={`avatar avatar-${size}`}>
-      {image ? <img src={image} alt="" /> : initials}
+      {image ? <img src={image} alt={name} /> : initials}
     </span>
   )
 }
@@ -256,6 +326,15 @@ export function Pill({
   return <span className={`pill pill-${tone}`}>{children}</span>
 }
 
+export function LivePulse({ label = "Active Operations" }: { label?: string }) {
+  return (
+    <span className="live-pulse-container">
+      <span className="live-pulse-dot" />
+      <span>{label}</span>
+    </span>
+  )
+}
+
 export function Sheet({
   children,
   onClose,
@@ -263,6 +342,16 @@ export function Sheet({
   children: ReactNode
   onClose: () => void
 }) {
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose()
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [onClose])
+
   return (
     <div className="sheet-layer" role="presentation" onMouseDown={onClose}>
       <section
@@ -274,6 +363,52 @@ export function Sheet({
         <span className="sheet-handle" />
         {children}
       </section>
+    </div>
+  )
+}
+
+export function EmptyState({
+  title,
+  message,
+  action,
+}: {
+  title: string
+  message: string
+  action?: ReactNode
+}) {
+  return (
+    <div
+      style={{
+        padding: "48px 20px",
+        textAlign: "center",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "12px",
+      }}
+    >
+      <div
+        style={{
+          width: "56px",
+          height: "56px",
+          borderRadius: "50%",
+          background: "var(--brand-blue-soft)",
+          color: "var(--brand-blue)",
+          display: "grid",
+          placeItems: "center",
+        }}
+      >
+        <Icon name="search" size={24} />
+      </div>
+      <div>
+        <h3 style={{ margin: "0 0 4px", fontSize: "16px", color: "var(--brand-primary)", fontWeight: 700 }}>
+          {title}
+        </h3>
+        <p style={{ margin: 0, fontSize: "13px", color: "var(--text-secondary)", maxWidth: "320px" }}>
+          {message}
+        </p>
+      </div>
+      {action && <div style={{ marginTop: "8px" }}>{action}</div>}
     </div>
   )
 }
