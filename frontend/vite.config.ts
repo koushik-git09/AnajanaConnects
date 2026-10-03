@@ -12,6 +12,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(import.meta.dirname, './src'),
+      'onnxruntime-web': 'onnxruntime-web/wasm',
     },
   },
   server: {

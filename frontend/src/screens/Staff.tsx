@@ -1179,7 +1179,7 @@ export default function Staff({
           style={{
             position: "fixed",
             inset: 0,
-            zIndex: 60,
+            zIndex: 1000,
             background: "rgba(0, 0, 0, 0.75)",
             backdropFilter: "blur(4px)",
             display: "flex",

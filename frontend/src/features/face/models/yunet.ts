@@ -1,11 +1,5 @@
-import * as ort from "onnxruntime-web"
+import { configureOrt, ort } from "./ortRuntime"
 import { BoundingBox, FaceDetection, FaceLandmarks } from "../types"
-
-// Configure ONNX Runtime Web WASM paths locally
-if (typeof window !== "undefined" && ort?.env?.wasm) {
-  ort.env.wasm.wasmPaths = "/wasm/"
-  ort.env.wasm.numThreads = 1
-}
 
 let yunetSession: ort.InferenceSession | null = null
 
@@ -17,9 +11,12 @@ const FALLBACK_MODEL_PATH =
 export async function loadYuNetModel(): Promise<ort.InferenceSession> {
   if (yunetSession) return yunetSession
 
+  configureOrt()
+
   const sessionOptions: ort.InferenceSession.SessionOptions = {
     executionProviders: ["wasm"],
     graphOptimizationLevel: "all",
+    logSeverityLevel: 3,
   }
 
   try {
