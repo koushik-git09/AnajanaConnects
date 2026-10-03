@@ -12,6 +12,7 @@ import ResetPassword from "./screens/ResetPassword"
 import Salary from "./screens/Salary"
 import Settings from "./screens/Settings"
 import Staff from "./screens/Staff"
+import PwaInstallPrompt from "./components/PwaInstallPrompt"
 
 export default function App() {
   return (
@@ -72,6 +73,7 @@ export default function App() {
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
+        <PwaInstallPrompt />
       </AuthProvider>
     </BrowserRouter>
   )
