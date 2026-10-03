@@ -1,5 +1,9 @@
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:8000/api"
+function getApiBaseUrl(): string {
+  const envUrl = (import.meta.env.VITE_API_URL || "http://localhost:8000/api").trim().replace(/\/+$/, "")
+  return envUrl.endsWith("/api") ? envUrl : `${envUrl}/api`
+}
+
+const API_BASE_URL = getApiBaseUrl()
 
 export const TOKEN_STORAGE_KEY = "anjana_connects_access_token"
 
