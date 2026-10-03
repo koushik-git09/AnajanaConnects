@@ -141,9 +141,9 @@ export default function Salary({
           style={{
             marginBottom: "16px",
             padding: "12px 16px",
-            background: "rgba(245, 158, 11, 0.12)",
-            border: "1px solid #f59e0b",
-            borderRadius: "10px",
+            background: "var(--status-leave-soft, #fff5df)",
+            border: "1px solid rgba(183, 121, 31, 0.25)",
+            borderRadius: "var(--radius-sm, 8px)",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -152,7 +152,7 @@ export default function Salary({
           }}
         >
           <div>
-            <strong style={{ color: "#d97706" }}>Agency Default Cutoff Not Set</strong>
+            <strong style={{ color: "var(--status-leave, #b7791f)", fontSize: "0.92rem" }}>Agency Default Cutoff Not Set</strong>
             <p style={{ margin: "2px 0 0 0", fontSize: "0.85rem", color: "var(--text-secondary)" }}>
               Employees without an individual cutoff will not have absence deductions until defined in Settings.
             </p>
