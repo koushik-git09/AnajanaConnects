@@ -48,6 +48,22 @@ app.include_router(dashboard_router, prefix="/api", tags=["Dashboard"])
 app.include_router(reports_router, prefix="/api", tags=["Reports"])
 
 
+import logging
+from fastapi import Request
+from fastapi.responses import JSONResponse
+
+logger = logging.getLogger("anjana_connects")
+
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.error("Unhandled server exception on %s %s: %s", request.method, request.url.path, exc, exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "An internal server error occurred. Please try again or contact system administration."},
+    )
+
+
 @app.get("/", summary="Root API endpoint")
 async def root():
     return {
@@ -65,8 +81,8 @@ async def health_check():
             "database": "connected",
         }
     except Exception as e:
+        logger.error("Database health check ping failed: %s", e)
         return {
             "status": "unhealthy",
             "database": "disconnected",
-            "error": str(e),
         }

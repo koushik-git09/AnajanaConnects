@@ -40,8 +40,11 @@ class Settings:
             "http://127.0.0.1:5174",
             "http://localhost:3000",
         ]
-        if self.FRONTEND_URL and self.FRONTEND_URL not in origins:
-            origins.append(self.FRONTEND_URL)
+        if self.FRONTEND_URL:
+            for item in self.FRONTEND_URL.split(","):
+                clean = item.strip().rstrip("/")
+                if clean and clean not in origins:
+                    origins.append(clean)
         return origins
 
 

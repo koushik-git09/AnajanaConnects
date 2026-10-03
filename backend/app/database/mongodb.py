@@ -1,8 +1,11 @@
+import logging
 from pymongo import ASCENDING, DESCENDING, MongoClient
 from pymongo.collection import Collection
 from pymongo.database import Database
 
 from app.core.config import settings
+
+logger = logging.getLogger(__name__)
 
 if not settings.MONGODB_URI:
     raise RuntimeError("MONGODB_URI is not configured in environment variables")
@@ -24,7 +27,7 @@ def init_db():
         # Unique index on email field in users collection
         users_collection.create_index([("email", ASCENDING)], unique=True)
     except Exception as e:
-        print(f"Warning: could not create users email index: {e}")
+        logger.warning("Could not create users email index: %s", e)
 
     try:
         # TTL index on expires_at for automatic cleanup of expired reset tokens
@@ -37,7 +40,7 @@ def init_db():
         # Index on user_id for fast user token invalidation
         password_reset_tokens_collection.create_index([("user_id", ASCENDING)])
     except Exception as e:
-        print(f"Warning: could not create password_reset_tokens indexes: {e}")
+        logger.warning("Could not create password_reset_tokens indexes: %s", e)
 
     try:
         # Compound unique index: scoped per agency so employee_code is unique within the agency
@@ -54,7 +57,7 @@ def init_db():
             [("agency_id", ASCENDING), ("name", ASCENDING)],
         )
     except Exception as e:
-        print(f"Warning: could not create employees indexes: {e}")
+        logger.warning("Could not create employees indexes: %s", e)
 
     try:
         # Unique compound index to prevent duplicate attendance records for an employee on a single calendar date
@@ -71,13 +74,13 @@ def init_db():
             [("agency_id", ASCENDING), ("employee_id", ASCENDING), ("date", DESCENDING)],
         )
     except Exception as e:
-        print(f"Warning: could not create attendance indexes: {e}")
+        logger.warning("Could not create attendance indexes: %s", e)
 
     try:
         # Unique index for agency configuration
         agencies_collection.create_index([("agency_id", ASCENDING)], unique=True)
     except Exception as e:
-        print(f"Warning: could not create agencies index: {e}")
+        logger.warning("Could not create agencies index: %s", e)
 
     try:
         # Compound unique index for face templates: one active template per employee within an agency
@@ -86,7 +89,7 @@ def init_db():
             unique=True,
         )
     except Exception as e:
-        print(f"Warning: could not create face_templates index: {e}")
+        logger.warning("Could not create face_templates index: %s", e)
 
     try:
         # TTL index for automatic expiry of face recognition sessions (5 min)
@@ -100,4 +103,4 @@ def init_db():
             unique=True,
         )
     except Exception as e:
-        print(f"Warning: could not create face_recognition_sessions index: {e}")
+        logger.warning("Could not create face_recognition_sessions index: %s", e)

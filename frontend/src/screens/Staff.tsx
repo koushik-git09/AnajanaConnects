@@ -1191,12 +1191,12 @@ export default function Staff({
           <div
             style={{
               width: "100%",
-              maxWidth: "400px",
-              background: "var(--surface, #0f172a)",
-              border: "1px solid var(--border, #334155)",
-              borderRadius: "20px",
+              maxWidth: "420px",
+              background: "var(--surface)",
+              border: "1px solid var(--border)",
+              borderRadius: "var(--radius-lg, 14px)",
               padding: "24px",
-              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.6)",
+              boxShadow: "var(--shadow-xl)",
             }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px" }}>

@@ -253,8 +253,8 @@ export default function Reports() {
         style={{
           display: "flex",
           gap: "8px",
-          borderBottom: "1px solid var(--border, #334155)",
-          paddingBottom: "12px",
+          borderBottom: "1px solid var(--border)",
+          paddingBottom: "14px",
           marginBottom: "20px",
           overflowX: "auto",
         }}
@@ -264,16 +264,18 @@ export default function Reports() {
           onClick={() => setActiveTab("attendance")}
           style={{
             padding: "8px 16px",
-            borderRadius: "8px",
-            border: "none",
-            background: activeTab === "attendance" ? "var(--brand-primary, #123b72)" : "rgba(255, 255, 255, 0.05)",
-            color: activeTab === "attendance" ? "#ffffff" : "var(--text-secondary, #94a3b8)",
-            fontWeight: activeTab === "attendance" ? 600 : 400,
+            borderRadius: "var(--radius-sm, 8px)",
+            border: activeTab === "attendance" ? "1px solid var(--brand-primary)" : "1px solid var(--border)",
+            background: activeTab === "attendance" ? "var(--brand-primary, #123b72)" : "var(--surface)",
+            color: activeTab === "attendance" ? "#ffffff" : "var(--text-secondary)",
+            fontWeight: activeTab === "attendance" ? 600 : 500,
             cursor: "pointer",
-            fontSize: "0.9rem",
+            fontSize: "0.88rem",
             display: "flex",
             alignItems: "center",
             gap: "8px",
+            boxShadow: activeTab === "attendance" ? "var(--shadow-xs)" : "none",
+            transition: "all 0.15s ease",
           }}
         >
           <Icon name="attendance" size={16} />
@@ -285,16 +287,18 @@ export default function Reports() {
           onClick={() => setActiveTab("payroll")}
           style={{
             padding: "8px 16px",
-            borderRadius: "8px",
-            border: "none",
-            background: activeTab === "payroll" ? "var(--brand-primary, #123b72)" : "rgba(255, 255, 255, 0.05)",
-            color: activeTab === "payroll" ? "#ffffff" : "var(--text-secondary, #94a3b8)",
-            fontWeight: activeTab === "payroll" ? 600 : 400,
+            borderRadius: "var(--radius-sm, 8px)",
+            border: activeTab === "payroll" ? "1px solid var(--brand-primary)" : "1px solid var(--border)",
+            background: activeTab === "payroll" ? "var(--brand-primary, #123b72)" : "var(--surface)",
+            color: activeTab === "payroll" ? "#ffffff" : "var(--text-secondary)",
+            fontWeight: activeTab === "payroll" ? 600 : 500,
             cursor: "pointer",
-            fontSize: "0.9rem",
+            fontSize: "0.88rem",
             display: "flex",
             alignItems: "center",
             gap: "8px",
+            boxShadow: activeTab === "payroll" ? "var(--shadow-xs)" : "none",
+            transition: "all 0.15s ease",
           }}
         >
           <Icon name="salary" size={16} />
@@ -306,16 +310,18 @@ export default function Reports() {
           onClick={() => setActiveTab("employee")}
           style={{
             padding: "8px 16px",
-            borderRadius: "8px",
-            border: "none",
-            background: activeTab === "employee" ? "var(--brand-primary, #123b72)" : "rgba(255, 255, 255, 0.05)",
-            color: activeTab === "employee" ? "#ffffff" : "var(--text-secondary, #94a3b8)",
-            fontWeight: activeTab === "employee" ? 600 : 400,
+            borderRadius: "var(--radius-sm, 8px)",
+            border: activeTab === "employee" ? "1px solid var(--brand-primary)" : "1px solid var(--border)",
+            background: activeTab === "employee" ? "var(--brand-primary, #123b72)" : "var(--surface)",
+            color: activeTab === "employee" ? "#ffffff" : "var(--text-secondary)",
+            fontWeight: activeTab === "employee" ? 600 : 500,
             cursor: "pointer",
-            fontSize: "0.9rem",
+            fontSize: "0.88rem",
             display: "flex",
             alignItems: "center",
             gap: "8px",
+            boxShadow: activeTab === "employee" ? "var(--shadow-xs)" : "none",
+            transition: "all 0.15s ease",
           }}
         >
           <Icon name="staff" size={16} />
@@ -331,18 +337,19 @@ export default function Reports() {
           {/* Filter Bar */}
           <div
             style={{
-              padding: "16px",
-              background: "rgba(30, 41, 59, 0.4)",
-              borderRadius: "12px",
-              border: "1px solid var(--border, #334155)",
+              padding: "18px 20px",
+              background: "var(--surface)",
+              borderRadius: "var(--radius-lg, 14px)",
+              border: "1px solid var(--border)",
+              boxShadow: "var(--shadow-xs)",
               marginBottom: "20px",
               display: "grid",
-              gap: "12px",
+              gap: "14px",
             }}
           >
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "12px" }}>
               <div>
-                <label style={{ fontSize: "0.8rem", color: "var(--text-muted, #94a3b8)", display: "block", marginBottom: "4px" }}>
+                <label style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-secondary)", display: "block", marginBottom: "4px" }}>
                   Start Date
                 </label>
                 <input
@@ -352,16 +359,17 @@ export default function Reports() {
                   style={{
                     width: "100%",
                     padding: "8px 12px",
-                    borderRadius: "6px",
-                    background: "var(--surface, #1e293b)",
-                    border: "1px solid var(--border, #334155)",
-                    color: "inherit",
+                    borderRadius: "var(--radius-sm, 8px)",
+                    background: "var(--surface)",
+                    border: "1px solid var(--border)",
+                    color: "var(--text-primary)",
+                    fontSize: "0.88rem",
                   }}
                 />
               </div>
 
               <div>
-                <label style={{ fontSize: "0.8rem", color: "var(--text-muted, #94a3b8)", display: "block", marginBottom: "4px" }}>
+                <label style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-secondary)", display: "block", marginBottom: "4px" }}>
                   End Date
                 </label>
                 <input
@@ -371,16 +379,17 @@ export default function Reports() {
                   style={{
                     width: "100%",
                     padding: "8px 12px",
-                    borderRadius: "6px",
-                    background: "var(--surface, #1e293b)",
-                    border: "1px solid var(--border, #334155)",
-                    color: "inherit",
+                    borderRadius: "var(--radius-sm, 8px)",
+                    background: "var(--surface)",
+                    border: "1px solid var(--border)",
+                    color: "var(--text-primary)",
+                    fontSize: "0.88rem",
                   }}
                 />
               </div>
 
               <div>
-                <label style={{ fontSize: "0.8rem", color: "var(--text-muted, #94a3b8)", display: "block", marginBottom: "4px" }}>
+                <label style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-secondary)", display: "block", marginBottom: "4px" }}>
                   Status Filter
                 </label>
                 <select
@@ -389,10 +398,11 @@ export default function Reports() {
                   style={{
                     width: "100%",
                     padding: "8px 12px",
-                    borderRadius: "6px",
-                    background: "var(--surface, #1e293b)",
-                    border: "1px solid var(--border, #334155)",
-                    color: "inherit",
+                    borderRadius: "var(--radius-sm, 8px)",
+                    background: "var(--surface)",
+                    border: "1px solid var(--border)",
+                    color: "var(--text-primary)",
+                    fontSize: "0.88rem",
                   }}
                 >
                   <option value="All">All Statuses</option>
@@ -404,7 +414,7 @@ export default function Reports() {
               </div>
 
               <div>
-                <label style={{ fontSize: "0.8rem", color: "var(--text-muted, #94a3b8)", display: "block", marginBottom: "4px" }}>
+                <label style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-secondary)", display: "block", marginBottom: "4px" }}>
                   Search Staff
                 </label>
                 <input
@@ -416,16 +426,17 @@ export default function Reports() {
                   style={{
                     width: "100%",
                     padding: "8px 12px",
-                    borderRadius: "6px",
-                    background: "var(--surface, #1e293b)",
-                    border: "1px solid var(--border, #334155)",
-                    color: "inherit",
+                    borderRadius: "var(--radius-sm, 8px)",
+                    background: "var(--surface)",
+                    border: "1px solid var(--border)",
+                    color: "var(--text-primary)",
+                    fontSize: "0.88rem",
                   }}
                 />
               </div>
             </div>
 
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "4px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "4px", flexWrap: "wrap", gap: "10px" }}>
               <Button variant="primary" onClick={fetchAttendanceReport} disabled={attLoading}>
                 {attLoading ? "Loading Report..." : "Apply Filters"}
               </Button>
@@ -442,7 +453,17 @@ export default function Reports() {
           </div>
 
           {attError && (
-            <div style={{ padding: "12px", background: "rgba(239, 68, 68, 0.1)", border: "1px solid #ef4444", borderRadius: "8px", color: "#ef4444", marginBottom: "16px" }}>
+            <div
+              style={{
+                padding: "12px 16px",
+                background: "var(--status-absent-soft, #fceded)",
+                border: "1px solid rgba(194, 65, 65, 0.25)",
+                borderRadius: "var(--radius-sm, 8px)",
+                color: "var(--status-absent, #c24141)",
+                marginBottom: "16px",
+                fontSize: "0.88rem",
+              }}
+            >
               {attError}
             </div>
           )}
@@ -450,31 +471,71 @@ export default function Reports() {
           {/* Attendance KPI Cards */}
           {attData && (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "12px", marginBottom: "20px" }}>
-              <div style={{ padding: "14px", borderRadius: "8px", background: "rgba(30, 41, 59, 0.5)", border: "1px solid var(--border, #334155)" }}>
-                <span style={{ fontSize: "0.8rem", color: "var(--text-muted, #94a3b8)" }}>Total Records</span>
-                <div style={{ fontSize: "1.35rem", fontWeight: 700, marginTop: "4px" }}>{attData.summary.total_records}</div>
+              <div
+                style={{
+                  padding: "14px 16px",
+                  borderRadius: "var(--radius-md, 10px)",
+                  background: "var(--surface)",
+                  border: "1px solid var(--border)",
+                  boxShadow: "var(--shadow-xs)",
+                }}
+              >
+                <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-secondary)" }}>Total Records</span>
+                <div style={{ fontSize: "1.35rem", fontWeight: 700, marginTop: "4px", color: "var(--brand-primary)" }}>
+                  {attData.summary.total_records}
+                </div>
               </div>
 
-              <div style={{ padding: "14px", borderRadius: "8px", background: "rgba(16, 185, 129, 0.1)", border: "1px solid rgba(16, 185, 129, 0.3)" }}>
-                <span style={{ fontSize: "0.8rem", color: "#10b981" }}>Present Marks</span>
-                <div style={{ fontSize: "1.35rem", fontWeight: 700, marginTop: "4px", color: "#10b981" }}>{attData.summary.total_present}</div>
+              <div
+                style={{
+                  padding: "14px 16px",
+                  borderRadius: "var(--radius-md, 10px)",
+                  background: "var(--status-present-soft, #eaf4ed)",
+                  border: "1px solid rgba(63, 125, 88, 0.2)",
+                  boxShadow: "var(--shadow-xs)",
+                }}
+              >
+                <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--status-present)" }}>Present Marks</span>
+                <div style={{ fontSize: "1.35rem", fontWeight: 700, marginTop: "4px", color: "var(--status-present)" }}>
+                  {attData.summary.total_present}
+                </div>
               </div>
 
-              <div style={{ padding: "14px", borderRadius: "8px", background: "rgba(239, 68, 68, 0.1)", border: "1px solid rgba(239, 68, 68, 0.3)" }}>
-                <span style={{ fontSize: "0.8rem", color: "#ef4444" }}>Absent Marks</span>
-                <div style={{ fontSize: "1.35rem", fontWeight: 700, marginTop: "4px", color: "#ef4444" }}>{attData.summary.total_absent}</div>
+              <div
+                style={{
+                  padding: "14px 16px",
+                  borderRadius: "var(--radius-md, 10px)",
+                  background: "var(--status-absent-soft, #fceded)",
+                  border: "1px solid rgba(194, 65, 65, 0.2)",
+                  boxShadow: "var(--shadow-xs)",
+                }}
+              >
+                <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--status-absent)" }}>Absent Marks</span>
+                <div style={{ fontSize: "1.35rem", fontWeight: 700, marginTop: "4px", color: "var(--status-absent)" }}>
+                  {attData.summary.total_absent}
+                </div>
               </div>
 
-              <div style={{ padding: "14px", borderRadius: "8px", background: "rgba(99, 102, 241, 0.1)", border: "1px solid rgba(99, 102, 241, 0.3)" }}>
-                <span style={{ fontSize: "0.8rem", color: "#818cf8" }}>Compliance Rate</span>
-                <div style={{ fontSize: "1.35rem", fontWeight: 700, marginTop: "4px", color: "#818cf8" }}>{attData.summary.attendance_percentage}%</div>
+              <div
+                style={{
+                  padding: "14px 16px",
+                  borderRadius: "var(--radius-md, 10px)",
+                  background: "var(--brand-blue-soft, #eef4fc)",
+                  border: "1px solid rgba(25, 118, 210, 0.2)",
+                  boxShadow: "var(--shadow-xs)",
+                }}
+              >
+                <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--brand-blue)" }}>Compliance Rate</span>
+                <div style={{ fontSize: "1.35rem", fontWeight: 700, marginTop: "4px", color: "var(--brand-blue)" }}>
+                  {attData.summary.attendance_percentage}%
+                </div>
               </div>
             </div>
           )}
 
           {/* Attendance Table */}
           {attLoading ? (
-            <div style={{ padding: "40px", textAlign: "center", color: "var(--text-muted, #94a3b8)" }}>
+            <div style={{ padding: "40px", textAlign: "center", color: "var(--text-secondary)" }}>
               Fetching attendance compliance records...
             </div>
           ) : !attData || attData.items.length === 0 ? (
@@ -483,37 +544,59 @@ export default function Reports() {
               message="No attendance records match the selected date range and filter criteria."
             />
           ) : (
-            <div style={{ overflowX: "auto", borderRadius: "8px", border: "1px solid var(--border, #334155)" }}>
+            <div
+              style={{
+                overflowX: "auto",
+                borderRadius: "var(--radius-md, 10px)",
+                border: "1px solid var(--border)",
+                background: "var(--surface)",
+                boxShadow: "var(--shadow-xs)",
+              }}
+            >
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.88rem", textAlign: "left" }}>
                 <thead>
-                  <tr style={{ background: "rgba(30, 41, 59, 0.8)", borderBottom: "1px solid var(--border, #334155)" }}>
-                    <th style={{ padding: "12px 14px" }}>Date</th>
-                    <th style={{ padding: "12px 14px" }}>Employee</th>
-                    <th style={{ padding: "12px 14px" }}>Designation</th>
-                    <th style={{ padding: "12px 14px" }}>Status</th>
-                    <th style={{ padding: "12px 14px" }}>Marked Time</th>
-                    <th style={{ padding: "12px 14px" }}>Method</th>
+                  <tr style={{ background: "var(--surface-muted, #f8fafc)", borderBottom: "1px solid var(--border)" }}>
+                    <th style={{ padding: "12px 16px", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Date</th>
+                    <th style={{ padding: "12px 16px", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Employee</th>
+                    <th style={{ padding: "12px 16px", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Designation</th>
+                    <th style={{ padding: "12px 16px", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Status</th>
+                    <th style={{ padding: "12px 16px", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Marked Time</th>
+                    <th style={{ padding: "12px 16px", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Method</th>
                   </tr>
                 </thead>
                 <tbody>
                   {attData.items.map((row) => (
-                    <tr key={row.id} style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.05)" }}>
-                      <td style={{ padding: "12px 14px", whiteSpace: "nowrap" }}>{row.date}</td>
-                      <td style={{ padding: "12px 14px" }}>
-                        <strong>{row.employee_name}</strong>
-                        <div style={{ fontSize: "0.75rem", color: "var(--text-muted, #94a3b8)" }}>{row.employee_code}</div>
+                    <tr
+                      key={row.id}
+                      style={{
+                        borderBottom: "1px solid var(--border)",
+                        transition: "background 0.15s ease",
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "var(--surface-muted, #f9fafb)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                    >
+                      <td style={{ padding: "12px 16px", whiteSpace: "nowrap", color: "var(--text-primary)" }}>{row.date}</td>
+                      <td style={{ padding: "12px 16px" }}>
+                        <strong style={{ color: "var(--brand-primary)" }}>{row.employee_name}</strong>
+                        <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>{row.employee_code}</div>
                       </td>
-                      <td style={{ padding: "12px 14px", color: "var(--text-secondary, #94a3b8)" }}>{row.designation}</td>
-                      <td style={{ padding: "12px 14px" }}>
+                      <td style={{ padding: "12px 16px", color: "var(--text-secondary)" }}>{row.designation}</td>
+                      <td style={{ padding: "12px 16px" }}>
                         <Pill tone={row.status === "present" ? "success" : row.status === "absent" ? "danger" : "neutral"}>
                           {row.status.toUpperCase()}
                         </Pill>
                       </td>
-                      <td style={{ padding: "12px 14px", color: "var(--text-muted, #94a3b8)" }}>
+                      <td style={{ padding: "12px 16px", color: "var(--text-secondary)" }}>
                         {formatDate(row.marked_at)}
                       </td>
-                      <td style={{ padding: "12px 14px" }}>
-                        <span style={{ fontSize: "0.8rem", color: row.method === "face" ? "#10b981" : "var(--text-muted, #94a3b8)" }}>
+                      <td style={{ padding: "12px 16px" }}>
+                        <span
+                          style={{
+                            fontSize: "0.8rem",
+                            fontWeight: 500,
+                            color: row.method === "face" ? "var(--status-present)" : "var(--text-secondary)",
+                          }}
+                        >
                           {row.method === "face" ? "Biometric Face" : "Admin Manual"}
                         </span>
                       </td>
@@ -534,10 +617,11 @@ export default function Reports() {
           {/* Payroll Filter Bar */}
           <div
             style={{
-              padding: "16px",
-              background: "rgba(30, 41, 59, 0.4)",
-              borderRadius: "12px",
-              border: "1px solid var(--border, #334155)",
+              padding: "18px 20px",
+              background: "var(--surface)",
+              borderRadius: "var(--radius-lg, 14px)",
+              border: "1px solid var(--border)",
+              boxShadow: "var(--shadow-xs)",
               marginBottom: "20px",
               display: "flex",
               justifyContent: "space-between",
@@ -548,7 +632,7 @@ export default function Reports() {
           >
             <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
               <div>
-                <label style={{ fontSize: "0.8rem", color: "var(--text-muted, #94a3b8)", display: "block", marginBottom: "4px" }}>
+                <label style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-secondary)", display: "block", marginBottom: "4px" }}>
                   Year
                 </label>
                 <select
@@ -556,10 +640,11 @@ export default function Reports() {
                   onChange={(e) => setPayrollYear(parseInt(e.target.value, 10))}
                   style={{
                     padding: "8px 14px",
-                    borderRadius: "6px",
-                    background: "var(--surface, #1e293b)",
-                    border: "1px solid var(--border, #334155)",
-                    color: "inherit",
+                    borderRadius: "var(--radius-sm, 8px)",
+                    background: "var(--surface)",
+                    border: "1px solid var(--border)",
+                    color: "var(--text-primary)",
+                    fontSize: "0.88rem",
                   }}
                 >
                   <option value={currentYear - 1}>{currentYear - 1}</option>
@@ -569,7 +654,7 @@ export default function Reports() {
               </div>
 
               <div>
-                <label style={{ fontSize: "0.8rem", color: "var(--text-muted, #94a3b8)", display: "block", marginBottom: "4px" }}>
+                <label style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-secondary)", display: "block", marginBottom: "4px" }}>
                   Month
                 </label>
                 <select
@@ -577,10 +662,11 @@ export default function Reports() {
                   onChange={(e) => setPayrollMonth(parseInt(e.target.value, 10))}
                   style={{
                     padding: "8px 14px",
-                    borderRadius: "6px",
-                    background: "var(--surface, #1e293b)",
-                    border: "1px solid var(--border, #334155)",
-                    color: "inherit",
+                    borderRadius: "var(--radius-sm, 8px)",
+                    background: "var(--surface)",
+                    border: "1px solid var(--border)",
+                    color: "var(--text-primary)",
+                    fontSize: "0.88rem",
                   }}
                 >
                   {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
@@ -611,7 +697,17 @@ export default function Reports() {
           </div>
 
           {payrollError && (
-            <div style={{ padding: "12px", background: "rgba(239, 68, 68, 0.1)", border: "1px solid #ef4444", borderRadius: "8px", color: "#ef4444", marginBottom: "16px" }}>
+            <div
+              style={{
+                padding: "12px 16px",
+                background: "var(--status-absent-soft, #fceded)",
+                border: "1px solid rgba(194, 65, 65, 0.25)",
+                borderRadius: "var(--radius-sm, 8px)",
+                color: "var(--status-absent, #c24141)",
+                marginBottom: "16px",
+                fontSize: "0.88rem",
+              }}
+            >
               {payrollError}
             </div>
           )}
@@ -619,28 +715,62 @@ export default function Reports() {
           {/* Payroll KPI Cards */}
           {payrollData && (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "12px", marginBottom: "20px" }}>
-              <div style={{ padding: "14px", borderRadius: "8px", background: "rgba(30, 41, 59, 0.5)", border: "1px solid var(--border, #334155)" }}>
-                <span style={{ fontSize: "0.8rem", color: "var(--text-muted, #94a3b8)" }}>Total Employees</span>
-                <div style={{ fontSize: "1.35rem", fontWeight: 700, marginTop: "4px" }}>{payrollData.total_employees}</div>
+              <div
+                style={{
+                  padding: "14px 16px",
+                  borderRadius: "var(--radius-md, 10px)",
+                  background: "var(--surface)",
+                  border: "1px solid var(--border)",
+                  boxShadow: "var(--shadow-xs)",
+                }}
+              >
+                <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-secondary)" }}>Total Employees</span>
+                <div style={{ fontSize: "1.35rem", fontWeight: 700, marginTop: "4px", color: "var(--brand-primary)" }}>
+                  {payrollData.total_employees}
+                </div>
               </div>
 
-              <div style={{ padding: "14px", borderRadius: "8px", background: "rgba(99, 102, 241, 0.1)", border: "1px solid rgba(99, 102, 241, 0.3)" }}>
-                <span style={{ fontSize: "0.8rem", color: "#818cf8" }}>Total Base Payroll</span>
-                <div style={{ fontSize: "1.35rem", fontWeight: 700, marginTop: "4px", color: "#818cf8" }}>
+              <div
+                style={{
+                  padding: "14px 16px",
+                  borderRadius: "var(--radius-md, 10px)",
+                  background: "var(--brand-blue-soft, #eef4fc)",
+                  border: "1px solid rgba(25, 118, 210, 0.2)",
+                  boxShadow: "var(--shadow-xs)",
+                }}
+              >
+                <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--brand-blue)" }}>Total Base Payroll</span>
+                <div style={{ fontSize: "1.35rem", fontWeight: 700, marginTop: "4px", color: "var(--brand-blue)" }}>
                   ₹{payrollData.total_base_salary.toLocaleString("en-IN")}
                 </div>
               </div>
 
-              <div style={{ padding: "14px", borderRadius: "8px", background: "rgba(239, 68, 68, 0.1)", border: "1px solid rgba(239, 68, 68, 0.3)" }}>
-                <span style={{ fontSize: "0.8rem", color: "#ef4444" }}>Total Deductions</span>
-                <div style={{ fontSize: "1.35rem", fontWeight: 700, marginTop: "4px", color: "#ef4444" }}>
+              <div
+                style={{
+                  padding: "14px 16px",
+                  borderRadius: "var(--radius-md, 10px)",
+                  background: "var(--status-absent-soft, #fceded)",
+                  border: "1px solid rgba(194, 65, 65, 0.2)",
+                  boxShadow: "var(--shadow-xs)",
+                }}
+              >
+                <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--status-absent)" }}>Total Deductions</span>
+                <div style={{ fontSize: "1.35rem", fontWeight: 700, marginTop: "4px", color: "var(--status-absent)" }}>
                   ₹{payrollData.total_deductions.toLocaleString("en-IN")}
                 </div>
               </div>
 
-              <div style={{ padding: "14px", borderRadius: "8px", background: "rgba(16, 185, 129, 0.1)", border: "1px solid rgba(16, 185, 129, 0.3)" }}>
-                <span style={{ fontSize: "0.8rem", color: "#10b981" }}>Net Payable Total</span>
-                <div style={{ fontSize: "1.35rem", fontWeight: 700, marginTop: "4px", color: "#10b981" }}>
+              <div
+                style={{
+                  padding: "14px 16px",
+                  borderRadius: "var(--radius-md, 10px)",
+                  background: "var(--status-present-soft, #eaf4ed)",
+                  border: "1px solid rgba(63, 125, 88, 0.2)",
+                  boxShadow: "var(--shadow-xs)",
+                }}
+              >
+                <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--status-present)" }}>Net Payable Total</span>
+                <div style={{ fontSize: "1.35rem", fontWeight: 700, marginTop: "4px", color: "var(--status-present)" }}>
                   ₹{payrollData.total_net_payable.toLocaleString("en-IN")}
                 </div>
               </div>
@@ -649,7 +779,7 @@ export default function Reports() {
 
           {/* Payroll Table */}
           {payrollLoading ? (
-            <div style={{ padding: "40px", textAlign: "center", color: "var(--text-muted, #94a3b8)" }}>
+            <div style={{ padding: "40px", textAlign: "center", color: "var(--text-secondary)" }}>
               Calculating live payroll deductions...
             </div>
           ) : !payrollData || payrollData.items.length === 0 ? (
@@ -658,31 +788,47 @@ export default function Reports() {
               message="No active employees or payroll records exist for this period."
             />
           ) : (
-            <div style={{ overflowX: "auto", borderRadius: "8px", border: "1px solid var(--border, #334155)" }}>
+            <div
+              style={{
+                overflowX: "auto",
+                borderRadius: "var(--radius-md, 10px)",
+                border: "1px solid var(--border)",
+                background: "var(--surface)",
+                boxShadow: "var(--shadow-xs)",
+              }}
+            >
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.88rem", textAlign: "left" }}>
                 <thead>
-                  <tr style={{ background: "rgba(30, 41, 59, 0.8)", borderBottom: "1px solid var(--border, #334155)" }}>
-                    <th style={{ padding: "12px 14px" }}>Employee</th>
-                    <th style={{ padding: "12px 14px" }}>Designation</th>
-                    <th style={{ padding: "12px 14px" }}>Base Salary</th>
-                    <th style={{ padding: "12px 14px" }}>Cutoff / Day</th>
-                    <th style={{ padding: "12px 14px" }}>Present / Absent</th>
-                    <th style={{ padding: "12px 14px" }}>Deductions</th>
-                    <th style={{ padding: "12px 14px" }}>Net Salary</th>
+                  <tr style={{ background: "var(--surface-muted, #f8fafc)", borderBottom: "1px solid var(--border)" }}>
+                    <th style={{ padding: "12px 16px", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Employee</th>
+                    <th style={{ padding: "12px 16px", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Designation</th>
+                    <th style={{ padding: "12px 16px", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Base Salary</th>
+                    <th style={{ padding: "12px 16px", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Cutoff / Day</th>
+                    <th style={{ padding: "12px 16px", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Attendance</th>
+                    <th style={{ padding: "12px 16px", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Deductions</th>
+                    <th style={{ padding: "12px 16px", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Net Salary</th>
                   </tr>
                 </thead>
                 <tbody>
                   {payrollData.items.map((row) => (
-                    <tr key={row.employee_id} style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.05)" }}>
-                      <td style={{ padding: "12px 14px" }}>
-                        <strong>{row.name}</strong>
-                        <div style={{ fontSize: "0.75rem", color: "var(--text-muted, #94a3b8)" }}>{row.employee_code}</div>
+                    <tr
+                      key={row.employee_id}
+                      style={{
+                        borderBottom: "1px solid var(--border)",
+                        transition: "background 0.15s ease",
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "var(--surface-muted, #f9fafb)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                    >
+                      <td style={{ padding: "12px 16px" }}>
+                        <strong style={{ color: "var(--brand-primary)" }}>{row.name}</strong>
+                        <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>{row.employee_code}</div>
                       </td>
-                      <td style={{ padding: "12px 14px", color: "var(--text-secondary, #94a3b8)" }}>{row.designation}</td>
-                      <td style={{ padding: "12px 14px" }}>₹{row.base_salary.toLocaleString("en-IN")}</td>
-                      <td style={{ padding: "12px 14px" }}>
-                        <div>₹{row.effective_daily_cutoff ?? 0}</div>
-                        <span style={{ fontSize: "0.72rem", color: "var(--text-muted, #94a3b8)" }}>
+                      <td style={{ padding: "12px 16px", color: "var(--text-secondary)" }}>{row.designation}</td>
+                      <td style={{ padding: "12px 16px", color: "var(--text-primary)" }}>₹{row.base_salary.toLocaleString("en-IN")}</td>
+                      <td style={{ padding: "12px 16px" }}>
+                        <div style={{ color: "var(--text-primary)" }}>₹{row.effective_daily_cutoff ?? 0}</div>
+                        <span style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
                           {row.cutoff_source === "individual"
                             ? "Individual"
                             : row.cutoff_source === "agency_default"
@@ -690,16 +836,20 @@ export default function Reports() {
                             : "None"}
                         </span>
                       </td>
-                      <td style={{ padding: "12px 14px" }}>
-                        <span style={{ color: "#10b981", fontWeight: 600 }}>{row.present_days}P</span>
+                      <td style={{ padding: "12px 16px" }}>
+                        <span style={{ color: "var(--status-present)", fontWeight: 600 }}>{row.present_days}P</span>
                         {" / "}
-                        <span style={{ color: row.absent_days > 0 ? "#ef4444" : "inherit" }}>{row.absent_days}A</span>
+                        <span style={{ color: row.absent_days > 0 ? "var(--status-absent)" : "var(--text-secondary)" }}>
+                          {row.absent_days}A
+                        </span>
                       </td>
-                      <td style={{ padding: "12px 14px", color: row.absence_deduction > 0 ? "#ef4444" : "inherit" }}>
+                      <td style={{ padding: "12px 16px", color: row.absence_deduction > 0 ? "var(--status-absent)" : "var(--text-secondary)" }}>
                         -₹{row.absence_deduction.toLocaleString("en-IN")}
                       </td>
-                      <td style={{ padding: "12px 14px" }}>
-                        <strong style={{ color: "#10b981" }}>₹{row.calculated_salary.toLocaleString("en-IN")}</strong>
+                      <td style={{ padding: "12px 16px" }}>
+                        <strong style={{ color: "var(--status-present)", fontWeight: 700 }}>
+                          ₹{row.calculated_salary.toLocaleString("en-IN")}
+                        </strong>
                       </td>
                     </tr>
                   ))}
@@ -718,18 +868,19 @@ export default function Reports() {
           {/* Staff Audit Filter Bar */}
           <div
             style={{
-              padding: "16px",
-              background: "rgba(30, 41, 59, 0.4)",
-              borderRadius: "12px",
-              border: "1px solid var(--border, #334155)",
+              padding: "18px 20px",
+              background: "var(--surface)",
+              borderRadius: "var(--radius-lg, 14px)",
+              border: "1px solid var(--border)",
+              boxShadow: "var(--shadow-xs)",
               marginBottom: "20px",
               display: "grid",
-              gap: "12px",
+              gap: "14px",
             }}
           >
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "12px" }}>
               <div>
-                <label style={{ fontSize: "0.8rem", color: "var(--text-muted, #94a3b8)", display: "block", marginBottom: "4px" }}>
+                <label style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-secondary)", display: "block", marginBottom: "4px" }}>
                   Select Employee
                 </label>
                 <select
@@ -738,10 +889,11 @@ export default function Reports() {
                   style={{
                     width: "100%",
                     padding: "8px 12px",
-                    borderRadius: "6px",
-                    background: "var(--surface, #1e293b)",
-                    border: "1px solid var(--border, #334155)",
-                    color: "inherit",
+                    borderRadius: "var(--radius-sm, 8px)",
+                    background: "var(--surface)",
+                    border: "1px solid var(--border)",
+                    color: "var(--text-primary)",
+                    fontSize: "0.88rem",
                   }}
                 >
                   {staffList.map((emp) => (
@@ -753,7 +905,7 @@ export default function Reports() {
               </div>
 
               <div>
-                <label style={{ fontSize: "0.8rem", color: "var(--text-muted, #94a3b8)", display: "block", marginBottom: "4px" }}>
+                <label style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-secondary)", display: "block", marginBottom: "4px" }}>
                   Start Date
                 </label>
                 <input
@@ -763,16 +915,17 @@ export default function Reports() {
                   style={{
                     width: "100%",
                     padding: "8px 12px",
-                    borderRadius: "6px",
-                    background: "var(--surface, #1e293b)",
-                    border: "1px solid var(--border, #334155)",
-                    color: "inherit",
+                    borderRadius: "var(--radius-sm, 8px)",
+                    background: "var(--surface)",
+                    border: "1px solid var(--border)",
+                    color: "var(--text-primary)",
+                    fontSize: "0.88rem",
                   }}
                 />
               </div>
 
               <div>
-                <label style={{ fontSize: "0.8rem", color: "var(--text-muted, #94a3b8)", display: "block", marginBottom: "4px" }}>
+                <label style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-secondary)", display: "block", marginBottom: "4px" }}>
                   End Date
                 </label>
                 <input
@@ -782,16 +935,17 @@ export default function Reports() {
                   style={{
                     width: "100%",
                     padding: "8px 12px",
-                    borderRadius: "6px",
-                    background: "var(--surface, #1e293b)",
-                    border: "1px solid var(--border, #334155)",
-                    color: "inherit",
+                    borderRadius: "var(--radius-sm, 8px)",
+                    background: "var(--surface)",
+                    border: "1px solid var(--border)",
+                    color: "var(--text-primary)",
+                    fontSize: "0.88rem",
                   }}
                 />
               </div>
             </div>
 
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "4px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "4px", flexWrap: "wrap", gap: "10px" }}>
               <Button variant="primary" onClick={fetchStaffAuditReport} disabled={staffLoading || !selectedStaffId}>
                 {staffLoading ? "Auditing Records..." : "Audit Staff Logs"}
               </Button>
@@ -808,7 +962,17 @@ export default function Reports() {
           </div>
 
           {staffError && (
-            <div style={{ padding: "12px", background: "rgba(239, 68, 68, 0.1)", border: "1px solid #ef4444", borderRadius: "8px", color: "#ef4444", marginBottom: "16px" }}>
+            <div
+              style={{
+                padding: "12px 16px",
+                background: "var(--status-absent-soft, #fceded)",
+                border: "1px solid rgba(194, 65, 65, 0.25)",
+                borderRadius: "var(--radius-sm, 8px)",
+                color: "var(--status-absent, #c24141)",
+                marginBottom: "16px",
+                fontSize: "0.88rem",
+              }}
+            >
               {staffError}
             </div>
           )}
@@ -816,33 +980,71 @@ export default function Reports() {
           {/* Selected Staff KPI Cards */}
           {staffAuditData && (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "12px", marginBottom: "20px" }}>
-              <div style={{ padding: "14px", borderRadius: "8px", background: "rgba(30, 41, 59, 0.5)", border: "1px solid var(--border, #334155)" }}>
-                <span style={{ fontSize: "0.8rem", color: "var(--text-muted, #94a3b8)" }}>Recorded Days</span>
-                <div style={{ fontSize: "1.35rem", fontWeight: 700, marginTop: "4px" }}>
+              <div
+                style={{
+                  padding: "14px 16px",
+                  borderRadius: "var(--radius-md, 10px)",
+                  background: "var(--surface)",
+                  border: "1px solid var(--border)",
+                  boxShadow: "var(--shadow-xs)",
+                }}
+              >
+                <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-secondary)" }}>Recorded Days</span>
+                <div style={{ fontSize: "1.35rem", fontWeight: 700, marginTop: "4px", color: "var(--brand-primary)" }}>
                   {staffAuditData.summary.present + staffAuditData.summary.absent}
                 </div>
               </div>
 
-              <div style={{ padding: "14px", borderRadius: "8px", background: "rgba(16, 185, 129, 0.1)", border: "1px solid rgba(16, 185, 129, 0.3)" }}>
-                <span style={{ fontSize: "0.8rem", color: "#10b981" }}>Days Present</span>
-                <div style={{ fontSize: "1.35rem", fontWeight: 700, marginTop: "4px", color: "#10b981" }}>{staffAuditData.summary.present}</div>
+              <div
+                style={{
+                  padding: "14px 16px",
+                  borderRadius: "var(--radius-md, 10px)",
+                  background: "var(--status-present-soft, #eaf4ed)",
+                  border: "1px solid rgba(63, 125, 88, 0.2)",
+                  boxShadow: "var(--shadow-xs)",
+                }}
+              >
+                <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--status-present)" }}>Days Present</span>
+                <div style={{ fontSize: "1.35rem", fontWeight: 700, marginTop: "4px", color: "var(--status-present)" }}>
+                  {staffAuditData.summary.present}
+                </div>
               </div>
 
-              <div style={{ padding: "14px", borderRadius: "8px", background: "rgba(239, 68, 68, 0.1)", border: "1px solid rgba(239, 68, 68, 0.3)" }}>
-                <span style={{ fontSize: "0.8rem", color: "#ef4444" }}>Days Absent</span>
-                <div style={{ fontSize: "1.35rem", fontWeight: 700, marginTop: "4px", color: "#ef4444" }}>{staffAuditData.summary.absent}</div>
+              <div
+                style={{
+                  padding: "14px 16px",
+                  borderRadius: "var(--radius-md, 10px)",
+                  background: "var(--status-absent-soft, #fceded)",
+                  border: "1px solid rgba(194, 65, 65, 0.2)",
+                  boxShadow: "var(--shadow-xs)",
+                }}
+              >
+                <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--status-absent)" }}>Days Absent</span>
+                <div style={{ fontSize: "1.35rem", fontWeight: 700, marginTop: "4px", color: "var(--status-absent)" }}>
+                  {staffAuditData.summary.absent}
+                </div>
               </div>
 
-              <div style={{ padding: "14px", borderRadius: "8px", background: "rgba(99, 102, 241, 0.1)", border: "1px solid rgba(99, 102, 241, 0.3)" }}>
-                <span style={{ fontSize: "0.8rem", color: "#818cf8" }}>Attendance Rate</span>
-                <div style={{ fontSize: "1.35rem", fontWeight: 700, marginTop: "4px", color: "#818cf8" }}>{staffAuditData.summary.attendance_percentage}%</div>
+              <div
+                style={{
+                  padding: "14px 16px",
+                  borderRadius: "var(--radius-md, 10px)",
+                  background: "var(--brand-blue-soft, #eef4fc)",
+                  border: "1px solid rgba(25, 118, 210, 0.2)",
+                  boxShadow: "var(--shadow-xs)",
+                }}
+              >
+                <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--brand-blue)" }}>Attendance Rate</span>
+                <div style={{ fontSize: "1.35rem", fontWeight: 700, marginTop: "4px", color: "var(--brand-blue)" }}>
+                  {staffAuditData.summary.attendance_percentage}%
+                </div>
               </div>
             </div>
           )}
 
           {/* Staff Daily Log Table */}
           {staffLoading ? (
-            <div style={{ padding: "40px", textAlign: "center", color: "var(--text-muted, #94a3b8)" }}>
+            <div style={{ padding: "40px", textAlign: "center", color: "var(--text-secondary)" }}>
               Loading biometric attendance audit...
             </div>
           ) : !staffAuditData || staffAuditData.records.length === 0 ? (
@@ -851,25 +1053,41 @@ export default function Reports() {
               message="No attendance records were marked for this staff member in the chosen date range."
             />
           ) : (
-            <div style={{ overflowX: "auto", borderRadius: "8px", border: "1px solid var(--border, #334155)" }}>
+            <div
+              style={{
+                overflowX: "auto",
+                borderRadius: "var(--radius-md, 10px)",
+                border: "1px solid var(--border)",
+                background: "var(--surface)",
+                boxShadow: "var(--shadow-xs)",
+              }}
+            >
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.88rem", textAlign: "left" }}>
                 <thead>
-                  <tr style={{ background: "rgba(30, 41, 59, 0.8)", borderBottom: "1px solid var(--border, #334155)" }}>
-                    <th style={{ padding: "12px 14px" }}>Date</th>
-                    <th style={{ padding: "12px 14px" }}>Status</th>
-                    <th style={{ padding: "12px 14px" }}>Marked Time</th>
+                  <tr style={{ background: "var(--surface-muted, #f8fafc)", borderBottom: "1px solid var(--border)" }}>
+                    <th style={{ padding: "12px 16px", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Date</th>
+                    <th style={{ padding: "12px 16px", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Status</th>
+                    <th style={{ padding: "12px 16px", fontSize: "0.78rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Marked Time</th>
                   </tr>
                 </thead>
                 <tbody>
                   {staffAuditData.records.map((r, idx) => (
-                    <tr key={`${r.date}-${idx}`} style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.05)" }}>
-                      <td style={{ padding: "12px 14px", whiteSpace: "nowrap" }}>{r.date}</td>
-                      <td style={{ padding: "12px 14px" }}>
+                    <tr
+                      key={`${r.date}-${idx}`}
+                      style={{
+                        borderBottom: "1px solid var(--border)",
+                        transition: "background 0.15s ease",
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "var(--surface-muted, #f9fafb)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                    >
+                      <td style={{ padding: "12px 16px", whiteSpace: "nowrap", color: "var(--text-primary)" }}>{r.date}</td>
+                      <td style={{ padding: "12px 16px" }}>
                         <Pill tone={r.status === "present" ? "success" : r.status === "absent" ? "danger" : "neutral"}>
                           {r.status.toUpperCase()}
                         </Pill>
                       </td>
-                      <td style={{ padding: "12px 14px", color: "var(--text-muted, #94a3b8)" }}>
+                      <td style={{ padding: "12px 16px", color: "var(--text-secondary)" }}>
                         {formatDate(r.marked_at)}
                       </td>
                     </tr>

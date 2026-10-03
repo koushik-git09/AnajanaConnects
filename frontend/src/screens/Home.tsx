@@ -312,8 +312,16 @@ export default function Home({
         </div>
 
         {loading ? (
-          <div style={{ padding: "20px", textAlign: "center", color: "var(--text-muted)" }}>
-            Loading recent operational logs...
+          <div style={{ display: "grid", gap: "10px", padding: "8px 0" }}>
+            {[1, 2, 3].map((n) => (
+              <div key={n} style={{ display: "flex", alignItems: "center", gap: "14px", padding: "10px 4px" }}>
+                <div className="skeleton" style={{ width: "36px", height: "36px", borderRadius: "var(--radius-sm)" }} />
+                <div style={{ flex: 1, display: "grid", gap: "6px" }}>
+                  <div className="skeleton" style={{ width: "45%", height: "14px" }} />
+                  <div className="skeleton" style={{ width: "70%", height: "11px" }} />
+                </div>
+              </div>
+            ))}
           </div>
         ) : dashboard && dashboard.recent_activity.length > 0 ? (
           <div className="activity-list">
@@ -349,10 +357,12 @@ export default function Home({
             style={{
               padding: "24px 16px",
               textAlign: "center",
-              background: "var(--surface-subtle, rgba(255,255,255,0.03))",
-              borderRadius: "12px",
-              color: "var(--text-muted)",
+              background: "var(--surface)",
+              border: "1px solid var(--border)",
+              borderRadius: "var(--radius-md, 10px)",
+              color: "var(--text-secondary)",
               fontSize: "0.88rem",
+              boxShadow: "var(--shadow-xs)",
             }}
           >
             No attendance records logged yet for this period. Mark attendance via the Camera or Attendance Register to see live activity.
