@@ -419,10 +419,16 @@ export const agencyApi = {
     return apiFetch<AgencySalarySettings>("/agency/settings")
   },
 
-  async updateSettings(default_daily_cutoff: number): Promise<AgencySalarySettings> {
+  async updateSettings(
+    payload: number | { default_daily_cutoff?: number | null; name?: string }
+  ): Promise<AgencySalarySettings> {
+    const body =
+      typeof payload === "number"
+        ? { default_daily_cutoff: payload }
+        : payload
     return apiFetch<AgencySalarySettings>("/agency/settings", {
       method: "PUT",
-      body: JSON.stringify({ default_daily_cutoff }),
+      body: JSON.stringify(body),
     })
   },
 }
@@ -564,5 +570,139 @@ export interface FaceAttendanceMarkResponse {
   date: string
   marked_at?: string | null
   attendance_status?: string | null
+}
+
+export interface DashboardEmployeesSummary {
+  active: number
+  inactive: number
+  total: number
+}
+
+export interface DashboardTodayAttendance {
+  date: string
+  total_employees: number
+  present: number
+  absent: number
+  unmarked: number
+  attendance_percentage: number
+}
+
+export interface DashboardMonthAttendance {
+  year: number
+  month: number
+  month_name: string
+  total_active_employees: number
+  overall_present: number
+  overall_absent: number
+  overall_attendance_percentage: number
+}
+
+export interface DashboardPayrollSummary {
+  year: number
+  month: number
+  month_name: string
+  total_employees: number
+  total_base_salary: number
+  total_absence_deduction: number
+  total_net_payable: number
+  agency_default_daily_cutoff?: number | null
+}
+
+export interface DashboardActivityItem {
+  id: string
+  employee_id: string
+  employee_name: string
+  employee_code: string
+  status: string
+  date: string
+  marked_at?: string | null
+  method: string
+}
+
+export interface DashboardSummaryResponse {
+  agency_id: string
+  agency_name: string
+  employees: DashboardEmployeesSummary
+  today_attendance: DashboardTodayAttendance
+  month_attendance: DashboardMonthAttendance
+  payroll: DashboardPayrollSummary
+  recent_activity: DashboardActivityItem[]
+}
+
+export const dashboardApi = {
+  async getSummary(): Promise<DashboardSummaryResponse> {
+    return apiFetch<DashboardSummaryResponse>("/dashboard/summary")
+  },
+}
+
+export interface AttendanceReportItem {
+  id: string
+  date: string
+  employee_id: string
+  employee_code: string
+  employee_name: string
+  designation: string
+  status: string
+  marked_at?: string | null
+  method: string
+}
+
+export interface AttendanceReportSummary {
+  start_date: string
+  end_date: string
+  total_records: number
+  total_present: number
+  total_absent: number
+  attendance_percentage: number
+}
+
+export interface AttendanceReportResponse {
+  summary: AttendanceReportSummary
+  items: AttendanceReportItem[]
+}
+
+export const reportsApi = {
+  async getAttendanceReport(params?: {
+    start_date?: string
+    end_date?: string
+    status?: string
+    employee_id?: string
+    search?: string
+  }): Promise<AttendanceReportResponse> {
+    const query = new URLSearchParams()
+    if (params?.start_date) query.set("start_date", params.start_date)
+    if (params?.end_date) query.set("end_date", params.end_date)
+    if (params?.status && params.status !== "All") query.set("status", params.status.toLowerCase())
+    if (params?.employee_id) query.set("employee_id", params.employee_id)
+    if (params?.search) query.set("search", params.search)
+    const qs = query.toString()
+    return apiFetch<AttendanceReportResponse>(`/reports/attendance${qs ? `?${qs}` : ""}`)
+  },
+
+  async getEmployeeAttendanceReport(
+    employeeId: string,
+    params?: { start_date?: string; end_date?: string }
+  ): Promise<EmployeeAttendanceHistoryResponse> {
+    const query = new URLSearchParams()
+    if (params?.start_date) query.set("start_date", params.start_date)
+    if (params?.end_date) query.set("end_date", params.end_date)
+    const qs = query.toString()
+    return apiFetch<EmployeeAttendanceHistoryResponse>(
+      `/reports/employee/${employeeId}${qs ? `?${qs}` : ""}`
+    )
+  },
+
+  async getSalaryReport(params?: {
+    year?: number
+    month?: number
+    employee_id?: string
+  }): Promise<SalaryMonthlyResponse> {
+    const query = new URLSearchParams()
+    if (params?.year) query.set("year", params.year.toString())
+    if (params?.month) query.set("month", params.month.toString())
+    if (params?.employee_id) query.set("employee_id", params.employee_id)
+    const qs = query.toString()
+    return apiFetch<SalaryMonthlyResponse>(`/reports/salary${qs ? `?${qs}` : ""}`)
+  },
 }
 

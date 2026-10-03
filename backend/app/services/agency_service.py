@@ -32,19 +32,28 @@ class AgencyService:
         return float(cutoff) if cutoff is not None else None
 
     @classmethod
-    def update_settings(cls, agency_id: str, default_daily_cutoff: float) -> AgencySalarySettingsResponse:
-        """Upsert the agency settings document with the specified daily cutoff."""
+    def update_settings(
+        cls,
+        agency_id: str,
+        default_daily_cutoff: float | None = None,
+        name: str | None = None,
+    ) -> AgencySalarySettingsResponse:
+        """Upsert the agency settings document with the specified daily cutoff and optional name."""
         now = datetime.now(timezone.utc)
+        update_fields: dict[str, Any] = {
+            "updated_at": now,
+        }
+        if default_daily_cutoff is not None:
+            update_fields["default_daily_cutoff"] = float(default_daily_cutoff)
+        if name and name.strip():
+            update_fields["name"] = name.strip()
+
         result = agencies_collection.find_one_and_update(
             {"agency_id": agency_id},
             {
-                "$set": {
-                    "default_daily_cutoff": float(default_daily_cutoff),
-                    "updated_at": now,
-                },
+                "$set": update_fields,
                 "$setOnInsert": {
                     "agency_id": agency_id,
-                    "name": agency_id,
                     "created_at": now,
                 },
             },

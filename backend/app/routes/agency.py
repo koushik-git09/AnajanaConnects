@@ -9,7 +9,7 @@ router = APIRouter(prefix="/agency", tags=["Agency"])
 
 @router.get("/settings", response_model=AgencySalarySettingsResponse)
 def get_agency_settings(current_user: dict = Depends(get_current_user)):
-    """Retrieve the current agency configuration including default daily cutoff."""
+    """Retrieve the current agency configuration including name and default daily cutoff."""
     agency_id = AgencyService.get_agency_id(current_user)
     settings_doc = AgencyService.get_settings(agency_id)
     updated_at = settings_doc.get("updated_at")
@@ -26,6 +26,10 @@ def update_agency_settings(
     req: AgencySalarySettingsRequest,
     current_user: dict = Depends(get_current_user),
 ):
-    """Update agency salary settings such as default daily salary cutoff."""
+    """Update agency salary settings such as default daily salary cutoff and display name."""
     agency_id = AgencyService.get_agency_id(current_user)
-    return AgencyService.update_settings(agency_id, req.default_daily_cutoff)
+    return AgencyService.update_settings(
+        agency_id=agency_id,
+        default_daily_cutoff=req.default_daily_cutoff,
+        name=req.name,
+    )

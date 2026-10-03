@@ -2,8 +2,14 @@ from pydantic import BaseModel, Field
 
 
 class AgencySalarySettingsRequest(BaseModel):
-    default_daily_cutoff: float = Field(
-        ...,
+    name: str | None = Field(
+        default=None,
+        min_length=1,
+        max_length=100,
+        description="Agency legal or display name",
+    )
+    default_daily_cutoff: float | None = Field(
+        default=None,
         ge=0,
         description="Agency default daily salary cutoff deduction in rupees",
     )
