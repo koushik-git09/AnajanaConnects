@@ -220,7 +220,10 @@ export const FaceRegistrationModal: React.FC<FaceRegistrationModalProps> = ({
     SAMPLE_PROMPTS[Math.min(currentSampleIndex, SAMPLE_PROMPTS.length - 1)]
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fadeIn">
+    <div
+      className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fadeIn"
+      style={{ zIndex: 1000 }}
+    >
       <div className="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col">
         {/* Header */}
         <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/50">

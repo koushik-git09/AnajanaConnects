@@ -227,6 +227,11 @@ export const CameraView: React.FC<CameraViewProps> = ({
           playsInline
           muted
           autoPlay
+          onLoadedMetadata={() => {
+            videoRef.current?.play().catch(() => {})
+            setIsCameraReady(true)
+          }}
+          onCanPlay={() => setIsCameraReady(true)}
           className={`w-full h-full object-cover transition-opacity duration-300 ${
             facingMode === "user" ? "scale-x-[-1]" : ""
           } ${isCameraReady ? "opacity-100" : "opacity-0"}`}
@@ -258,7 +263,7 @@ export const CameraView: React.FC<CameraViewProps> = ({
         {/* Loading Spinner */}
         {!isCameraReady && !cameraError && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/90 text-slate-300 gap-3">
-            <div className="w-9 h-9 border-3 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
+            <div className="w-9 h-9 border-[3px] border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
             <span className="text-sm font-medium tracking-wide">
               Starting camera...
             </span>

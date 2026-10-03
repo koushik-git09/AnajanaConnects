@@ -1,10 +1,4 @@
-import * as ort from "onnxruntime-web"
-
-// Configure ONNX Runtime Web WASM paths locally
-if (typeof window !== "undefined" && ort?.env?.wasm) {
-  ort.env.wasm.wasmPaths = "/wasm/"
-  ort.env.wasm.numThreads = 1
-}
+import { configureOrt, ort } from "./ortRuntime"
 
 let sfaceSession: ort.InferenceSession | null = null
 let activeModelVersion = "2021dec-int8"
@@ -23,9 +17,12 @@ export function getActiveSFaceModelVersion(): string {
 export async function loadSFaceModel(): Promise<ort.InferenceSession> {
   if (sfaceSession) return sfaceSession
 
+  configureOrt()
+
   const sessionOptions: ort.InferenceSession.SessionOptions = {
     executionProviders: ["wasm"],
     graphOptimizationLevel: "all",
+    logSeverityLevel: 3,
   }
 
   try {
