@@ -10,6 +10,8 @@ from app.routes.attendance import router as attendance_router
 from app.routes.agency import router as agency_router
 from app.routes.salary import router as salary_router
 from app.routes.face import router as face_router
+from app.routes.dashboard import router as dashboard_router
+from app.routes.reports import router as reports_router
 
 
 @asynccontextmanager
@@ -42,6 +44,8 @@ app.include_router(attendance_router, prefix="/api/attendance", tags=["Attendanc
 app.include_router(agency_router, prefix="/api", tags=["Agency"])
 app.include_router(salary_router, prefix="/api", tags=["Salary"])
 app.include_router(face_router, prefix="/api", tags=["Face Registration"])
+app.include_router(dashboard_router, prefix="/api", tags=["Dashboard"])
+app.include_router(reports_router, prefix="/api", tags=["Reports"])
 
 
 @app.get("/", summary="Root API endpoint")

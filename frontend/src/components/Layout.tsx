@@ -138,23 +138,7 @@ export default function Layout() {
               </span>
               <div>
                 <strong>Agency Settings</strong>
-                <p>Distributor code, work timings, and parameters</p>
-              </div>
-              <Icon name="chevron" size={16} />
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setProfileOpen(false)
-                navigate("/settings")
-              }}
-            >
-              <span>
-                <Icon name="shield" />
-              </span>
-              <div>
-                <strong>Security & Access Audit</strong>
-                <p>Owner credentials and verification history</p>
+                <p>Agency identity, salary rules, and profile</p>
               </div>
               <Icon name="chevron" size={16} />
             </button>
