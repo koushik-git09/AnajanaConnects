@@ -47,6 +47,9 @@ export interface Employee {
   joining_date: string
   status: "active" | "inactive"
   address?: string | null
+  daily_cutoff?: number | null
+  effective_daily_cutoff?: number | null
+  cutoff_source?: "agency_default" | "individual" | "not_set"
   created_at: string
   updated_at: string
 }
@@ -60,6 +63,7 @@ export interface EmployeeCreateData {
   phone?: string | null
   email?: string | null
   address?: string | null
+  daily_cutoff?: number | null
 }
 
 export interface EmployeeUpdateData {
@@ -71,6 +75,7 @@ export interface EmployeeUpdateData {
   phone?: string | null
   email?: string | null
   address?: string | null
+  daily_cutoff?: number | null
 }
 
 export interface EmployeeListResponse {
@@ -286,6 +291,55 @@ export interface AttendanceHistoryRecord {
   marked_at: string
 }
 
+export interface AttendanceSummary {
+  date: string
+  total_employees: number
+  present: number
+  absent: number
+  unmarked: number
+  attendance_percentage: number
+}
+
+export interface MonthlyAttendanceDaySummary {
+  date: string
+  total_employees: number
+  present: number
+  absent: number
+  unmarked: number
+  attendance_percentage: number
+}
+
+export interface MonthlyAttendanceSummary {
+  year: number
+  month: number
+  total_active_employees: number
+  overall_present: number
+  overall_absent: number
+  overall_attendance_percentage: number
+  days: MonthlyAttendanceDaySummary[]
+}
+
+export interface EmployeeProfileShort {
+  id: string
+  employee_code: string
+  name: string
+  designation: string
+  status: string
+}
+
+export interface EmployeeHistorySummary {
+  present: number
+  absent: number
+  unmarked: number
+  attendance_percentage: number
+}
+
+export interface EmployeeAttendanceHistoryResponse {
+  employee: EmployeeProfileShort
+  summary: EmployeeHistorySummary
+  records: AttendanceHistoryRecord[]
+}
+
 export const attendanceApi = {
   async get(params?: {
     date?: string
@@ -299,6 +353,22 @@ export const attendanceApi = {
 
     const qs = query.toString()
     return apiFetch<AttendanceResponse>(`/attendance${qs ? `?${qs}` : ""}`)
+  },
+
+  async getDailySummary(date?: string): Promise<AttendanceSummary> {
+    const query = new URLSearchParams()
+    if (date) query.set("date", date)
+    const qs = query.toString()
+    return apiFetch<AttendanceSummary>(`/attendance/summary${qs ? `?${qs}` : ""}`)
+  },
+
+  async getMonthlySummary(
+    year: number,
+    month: number,
+  ): Promise<MonthlyAttendanceSummary> {
+    return apiFetch<MonthlyAttendanceSummary>(
+      `/attendance/monthly-summary?year=${year}&month=${month}`,
+    )
   },
 
   async mark(data: {
@@ -325,15 +395,174 @@ export const attendanceApi = {
   async getEmployeeHistory(
     employeeId: string,
     params?: { start_date?: string; end_date?: string },
-  ): Promise<AttendanceHistoryRecord[]> {
+  ): Promise<EmployeeAttendanceHistoryResponse> {
     const query = new URLSearchParams()
     if (params?.start_date) query.set("start_date", params.start_date)
     if (params?.end_date) query.set("end_date", params.end_date)
 
     const qs = query.toString()
-    return apiFetch<AttendanceHistoryRecord[]>(
+    return apiFetch<EmployeeAttendanceHistoryResponse>(
       `/attendance/employee/${employeeId}${qs ? `?${qs}` : ""}`,
     )
   },
+}
+
+export interface AgencySalarySettings {
+  agency_id: string
+  name: string
+  default_daily_cutoff?: number | null
+  updated_at?: string | null
+}
+
+export const agencyApi = {
+  async getSettings(): Promise<AgencySalarySettings> {
+    return apiFetch<AgencySalarySettings>("/agency/settings")
+  },
+
+  async updateSettings(default_daily_cutoff: number): Promise<AgencySalarySettings> {
+    return apiFetch<AgencySalarySettings>("/agency/settings", {
+      method: "PUT",
+      body: JSON.stringify({ default_daily_cutoff }),
+    })
+  },
+}
+
+export interface SalaryEmployeeItem {
+  employee_id: string
+  employee_code: string
+  name: string
+  designation: string
+  status: string
+  joining_date: string
+  base_salary: number
+  effective_daily_cutoff?: number | null
+  cutoff_source: "agency_default" | "individual" | "not_set"
+  total_days_in_month: number
+  eligible_days: number
+  present_days: number
+  half_days: number
+  absent_days: number
+  unmarked_days: number
+  absence_deduction: number
+  calculated_salary: number
+}
+
+export interface SalaryMonthlyResponse {
+  year: number
+  month: number
+  month_name: string
+  agency_id: string
+  agency_default_daily_cutoff?: number | null
+  total_employees: number
+  total_base_salary: number
+  total_deductions: number
+  total_net_payable: number
+  items: SalaryEmployeeItem[]
+}
+
+export const salaryApi = {
+  async getMonthly(params?: {
+    year?: number
+    month?: number
+  }): Promise<SalaryMonthlyResponse> {
+    const query = new URLSearchParams()
+    if (params?.year) query.set("year", params.year.toString())
+    if (params?.month) query.set("month", params.month.toString())
+    const qs = query.toString()
+    return apiFetch<SalaryMonthlyResponse>(`/salary/monthly${qs ? `?${qs}` : ""}`)
+  },
+}
+
+export interface FaceRegistrationStatus {
+  registered: boolean
+  model_name?: string
+  model_version?: string
+  embedding_dimension?: number
+  sample_count?: number
+  created_at?: string
+  updated_at?: string
+}
+
+export interface FaceRegistrationPayload {
+  embeddings: number[][]
+  model_name: string
+  model_version: string
+  embedding_dimension: number
+}
+
+export interface FaceDeleteResponse {
+  message: string
+  employee_id: string
+}
+
+export const faceApi = {
+  async register(
+    employeeId: string,
+    data: FaceRegistrationPayload
+  ): Promise<FaceRegistrationStatus> {
+    return apiFetch<FaceRegistrationStatus>(`/employees/${employeeId}/face`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    })
+  },
+
+  async getStatus(employeeId: string): Promise<FaceRegistrationStatus> {
+    return apiFetch<FaceRegistrationStatus>(`/employees/${employeeId}/face`, {
+      method: "GET",
+    })
+  },
+
+  async delete(employeeId: string): Promise<FaceDeleteResponse> {
+    return apiFetch<FaceDeleteResponse>(`/employees/${employeeId}/face`, {
+      method: "DELETE",
+    })
+  },
+
+  async createRecognitionSession(): Promise<FaceRecognitionSessionResponse> {
+    return apiFetch<FaceRecognitionSessionResponse>("/attendance/face/session", {
+      method: "POST",
+    })
+  },
+
+  async markFaceAttendance(
+    data: FaceAttendanceMarkRequest
+  ): Promise<FaceAttendanceMarkResponse> {
+    return apiFetch<FaceAttendanceMarkResponse>("/attendance/face/mark", {
+      method: "POST",
+      body: JSON.stringify(data),
+    })
+  },
+}
+
+export interface FaceRecognitionEmployee {
+  employee_id: string
+  employee_code: string
+  name: string
+  embeddings: number[][]
+}
+
+export interface FaceRecognitionSessionResponse {
+  session_id: string
+  expires_at: string
+  model_name: string
+  model_version: string
+  embedding_dimension: number
+  employees: FaceRecognitionEmployee[]
+}
+
+export interface FaceAttendanceMarkRequest {
+  recognition_session_id: string
+  employee_id: string
+}
+
+export interface FaceAttendanceMarkResponse {
+  status: "marked" | "already_marked" | "already_marked_absent"
+  message: string
+  employee_id: string
+  employee_code?: string | null
+  employee_name?: string | null
+  date: string
+  marked_at?: string | null
+  attendance_status?: string | null
 }
 

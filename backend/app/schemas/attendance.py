@@ -53,3 +53,53 @@ class EmployeeAttendanceHistoryItem(BaseModel):
     date: str
     status: Literal["present", "absent"]
     marked_at: str
+
+
+class AttendanceSummaryResponse(BaseModel):
+    date: str
+    total_employees: int
+    present: int
+    absent: int
+    unmarked: int
+    attendance_percentage: float
+
+
+class MonthlyAttendanceDaySummary(BaseModel):
+    date: str
+    total_employees: int
+    present: int
+    absent: int
+    unmarked: int
+    attendance_percentage: float
+
+
+class MonthlyAttendanceSummaryResponse(BaseModel):
+    year: int
+    month: int
+    total_active_employees: int
+    overall_present: int
+    overall_absent: int
+    overall_attendance_percentage: float
+    days: list[MonthlyAttendanceDaySummary]
+
+
+class EmployeeProfileShort(BaseModel):
+    id: str
+    employee_code: str
+    name: str
+    designation: str
+    status: str = "active"
+
+
+class EmployeeHistorySummary(BaseModel):
+    present: int
+    absent: int
+    unmarked: int
+    attendance_percentage: float
+
+
+class EmployeeAttendanceHistoryResponse(BaseModel):
+    employee: EmployeeProfileShort
+    summary: EmployeeHistorySummary
+    records: list[EmployeeAttendanceHistoryItem]
+
