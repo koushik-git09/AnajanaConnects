@@ -1,6 +1,8 @@
+import { useEffect, useState } from "react"
 import { useNavigate, useOutletContext } from "react-router-dom"
 import { Button, Icon, IconButton, LivePulse } from "../components/ui"
 import { useAuth } from "../auth/AuthContext"
+import { type AttendanceSummary, attendanceApi } from "../services/api"
 
 export default function Home({
   onNavigate,
@@ -12,6 +14,27 @@ export default function Home({
   const navigate = useNavigate()
   const outlet = useOutletContext<{ onProfile?: () => void } | null>()
   const { user } = useAuth()
+
+  const [summary, setSummary] = useState<AttendanceSummary | null>(null)
+  const [loadingSummary, setLoadingSummary] = useState(true)
+
+  useEffect(() => {
+    let mounted = true
+    attendanceApi
+      .getDailySummary()
+      .then((data) => {
+        if (mounted) {
+          setSummary(data)
+          setLoadingSummary(false)
+        }
+      })
+      .catch(() => {
+        if (mounted) setLoadingSummary(false)
+      })
+    return () => {
+      mounted = false
+    }
+  }, [])
 
   const handleNavigate = (actionOrTarget: string) => {
     if (onNavigate) {
@@ -45,11 +68,12 @@ export default function Home({
     .slice(0, 2)
     .toUpperCase()
 
-  const todayFormatted = new Date().toLocaleDateString("en-US", {
+  const todayFormatted = new Date().toLocaleDateString("en-IN", {
     weekday: "long",
     day: "numeric",
     month: "long",
     year: "numeric",
+    timeZone: "Asia/Kolkata",
   })
 
   return (
@@ -84,28 +108,43 @@ export default function Home({
               <Icon name="flame" size={14} />
               Today’s Operational Roster
             </p>
-            <h2>21 of 25 staff on duty</h2>
+            <h2>
+              {loadingSummary
+                ? "Loading staff roster..."
+                : summary
+                  ? `${summary.present} of ${summary.total_employees} staff on duty`
+                  : "Operational Roster"}
+            </h2>
           </div>
-          <div className="attendance-ring" title="84% attendance rate today">
-            <strong>84%</strong>
+          <div
+            className="attendance-ring"
+            title={
+              summary
+                ? `${summary.attendance_percentage}% attendance rate today`
+                : "Today's attendance"
+            }
+          >
+            <strong>
+              {loadingSummary ? "—" : summary ? `${Math.round(summary.attendance_percentage)}%` : "0%"}
+            </strong>
           </div>
         </div>
 
         <div className="status-grid">
           <div>
             <span className="status-dot success" />
-            <strong>21</strong>
+            <strong>{loadingSummary ? "—" : summary ? summary.present : 0}</strong>
             <p>Present</p>
           </div>
           <div>
             <span className="status-dot danger" />
-            <strong>3</strong>
+            <strong>{loadingSummary ? "—" : summary ? summary.absent : 0}</strong>
             <p>Absent</p>
           </div>
           <div>
-            <span className="status-dot warning" />
-            <strong>1</strong>
-            <p>On Leave</p>
+            <span className="status-dot neutral" style={{ background: "var(--text-muted)" }} />
+            <strong>{loadingSummary ? "—" : summary ? summary.unmarked : 0}</strong>
+            <p>Unmarked</p>
           </div>
         </div>
 

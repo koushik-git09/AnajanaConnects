@@ -17,6 +17,7 @@ class EmployeeModel:
         email: str | None = None,
         address: str | None = None,
         status: str = "active",
+        daily_cutoff: float | None = None,
     ) -> dict[str, Any]:
         now = datetime.now(timezone.utc)
         return {
@@ -30,6 +31,8 @@ class EmployeeModel:
             "joining_date": joining_date.strip(),
             "status": status,
             "address": address.strip() if address else None,
+            "daily_cutoff": float(daily_cutoff) if daily_cutoff is not None else None,
             "created_at": now,
             "updated_at": now,
         }
+

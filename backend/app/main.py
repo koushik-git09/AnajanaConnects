@@ -7,6 +7,9 @@ from app.database.mongodb import db, init_db
 from app.routes.auth import router as auth_router
 from app.routes.employee import router as employee_router
 from app.routes.attendance import router as attendance_router
+from app.routes.agency import router as agency_router
+from app.routes.salary import router as salary_router
+from app.routes.face import router as face_router
 
 
 @asynccontextmanager
@@ -36,6 +39,9 @@ app.add_middleware(
 app.include_router(auth_router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(employee_router, prefix="/api/employees", tags=["Employees"])
 app.include_router(attendance_router, prefix="/api/attendance", tags=["Attendance"])
+app.include_router(agency_router, prefix="/api", tags=["Agency"])
+app.include_router(salary_router, prefix="/api", tags=["Salary"])
+app.include_router(face_router, prefix="/api", tags=["Face Registration"])
 
 
 @app.get("/", summary="Root API endpoint")

@@ -12,6 +12,7 @@ class EmployeeCreateRequest(BaseModel):
     phone: str | None = Field(default=None, max_length=25, description="Contact phone number")
     email: str | None = Field(default=None, max_length=100, description="Contact email address")
     address: str | None = Field(default=None, max_length=255, description="Residential address")
+    daily_cutoff: float | None = Field(default=None, ge=0, description="Individual daily salary cutoff override")
 
     @field_validator("name")
     @classmethod
@@ -57,6 +58,7 @@ class EmployeeUpdateRequest(BaseModel):
     phone: str | None = Field(default=None, max_length=25)
     email: str | None = Field(default=None, max_length=100)
     address: str | None = Field(default=None, max_length=255)
+    daily_cutoff: float | None = Field(default=None, ge=0)
 
     @field_validator("name")
     @classmethod
@@ -103,6 +105,9 @@ class EmployeeResponse(BaseModel):
     joining_date: str
     status: str
     address: str | None = None
+    daily_cutoff: float | None = None
+    effective_daily_cutoff: float | None = None
+    cutoff_source: Literal["agency_default", "individual", "not_set"] = "not_set"
     created_at: str
     updated_at: str
 

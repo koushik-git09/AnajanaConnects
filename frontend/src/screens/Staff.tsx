@@ -9,7 +9,8 @@ import {
   ScreenTitle,
   Sheet,
 } from "../components/ui"
-import { employeesApi, type Employee } from "../services/api"
+import { employeesApi, faceApi, type Employee, type FaceRegistrationStatus } from "../services/api"
+import { FaceRegistrationModal } from "../features/face"
 
 const AVATAR_COLORS = ["clay", "sage", "blue", "gold", "plum"]
 
@@ -51,6 +52,61 @@ export default function Staff({
   const [actionLoading, setActionLoading] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
 
+  // Face Registration States (Phase 8)
+  const [faceStatus, setFaceStatus] = useState<FaceRegistrationStatus | null>(null)
+  const [faceStatusLoading, setFaceStatusLoading] = useState(false)
+  const [isFaceModalOpen, setIsFaceModalOpen] = useState(false)
+  const [isFaceDeleteConfirmOpen, setIsFaceDeleteConfirmOpen] = useState(false)
+  const [faceActionLoading, setFaceActionLoading] = useState(false)
+  const [faceError, setFaceError] = useState<string | null>(null)
+
+  // Load employee face status when profile sheet opens
+  useEffect(() => {
+    if (!selected) {
+      setFaceStatus(null)
+      return
+    }
+    let isCancelled = false
+    const fetchStatus = async () => {
+      setFaceStatusLoading(true)
+      setFaceError(null)
+      try {
+        const res = await faceApi.getStatus(selected.id)
+        if (!isCancelled) {
+          setFaceStatus(res)
+        }
+      } catch (err: unknown) {
+        if (!isCancelled) {
+          console.warn("Failed to load face status:", err)
+        }
+      } finally {
+        if (!isCancelled) {
+          setFaceStatusLoading(false)
+        }
+      }
+    }
+    fetchStatus()
+    return () => {
+      isCancelled = true
+    }
+  }, [selected?.id])
+
+  const handleRemoveFace = async () => {
+    if (!selected) return
+    setFaceActionLoading(true)
+    setFaceError(null)
+    try {
+      await faceApi.delete(selected.id)
+      setFaceStatus({ registered: false, sample_count: 0 })
+      setIsFaceDeleteConfirmOpen(false)
+    } catch (err: unknown) {
+      const errObj = err as { detail?: string; message?: string }
+      setFaceError(errObj.detail || errObj.message || "Failed to remove face template.")
+    } finally {
+      setFaceActionLoading(false)
+    }
+  }
+
   // Add Employee Form States
   const [addName, setAddName] = useState("")
   const [addCode, setAddCode] = useState("")
@@ -62,6 +118,8 @@ export default function Staff({
   const [addPhone, setAddPhone] = useState("")
   const [addEmail, setAddEmail] = useState("")
   const [addAddress, setAddAddress] = useState("")
+  const [addCutoffMode, setAddCutoffMode] = useState<"agency" | "custom">("agency")
+  const [addDailyCutoff, setAddDailyCutoff] = useState("")
   const [addSuccess, setAddSuccess] = useState(false)
 
   // Edit Employee Form States
@@ -73,6 +131,8 @@ export default function Staff({
   const [editPhone, setEditPhone] = useState("")
   const [editEmail, setEditEmail] = useState("")
   const [editAddress, setEditAddress] = useState("")
+  const [editCutoffMode, setEditCutoffMode] = useState<"agency" | "custom">("agency")
+  const [editDailyCutoff, setEditDailyCutoff] = useState("")
 
   // Fetch employees from MongoDB API
   const loadEmployees = async (search = searchQuery, statusFilter = filter) => {
@@ -119,6 +179,8 @@ export default function Staff({
     setAddPhone("")
     setAddEmail("")
     setAddAddress("")
+    setAddCutoffMode("agency")
+    setAddDailyCutoff("")
     setFormError(null)
     setAddSuccess(false)
   }
@@ -133,6 +195,13 @@ export default function Staff({
     setEditPhone(emp.phone || "")
     setEditEmail(emp.email || "")
     setEditAddress(emp.address || "")
+    if (emp.daily_cutoff !== null && emp.daily_cutoff !== undefined) {
+      setEditCutoffMode("custom")
+      setEditDailyCutoff(emp.daily_cutoff.toString())
+    } else {
+      setEditCutoffMode("agency")
+      setEditDailyCutoff("")
+    }
     setFormError(null)
     setIsEditing(true)
   }
@@ -156,6 +225,16 @@ export default function Staff({
       return
     }
 
+    let cutoffVal: number | null = null
+    if (addCutoffMode === "custom") {
+      const parsedCutoff = parseFloat(addDailyCutoff)
+      if (isNaN(parsedCutoff) || parsedCutoff < 0) {
+        setFormError("Please enter a valid individual daily cutoff (minimum 0).")
+        return
+      }
+      cutoffVal = parsedCutoff
+    }
+
     setActionLoading(true)
     try {
       const created = await employeesApi.create({
@@ -167,6 +246,7 @@ export default function Staff({
         phone: addPhone.trim() || undefined,
         email: addEmail.trim() || undefined,
         address: addAddress.trim() || undefined,
+        daily_cutoff: cutoffVal,
       })
       setAddSuccess(true)
       // Append to list or reload
@@ -195,6 +275,16 @@ export default function Staff({
       return
     }
 
+    let cutoffVal: number | null = null
+    if (editCutoffMode === "custom") {
+      const parsedCutoff = parseFloat(editDailyCutoff)
+      if (isNaN(parsedCutoff) || parsedCutoff < 0) {
+        setFormError("Please enter a valid individual daily cutoff (minimum 0).")
+        return
+      }
+      cutoffVal = parsedCutoff
+    }
+
     setActionLoading(true)
     try {
       const updated = await employeesApi.update(selected.id, {
@@ -206,6 +296,7 @@ export default function Staff({
         phone: editPhone.trim() || undefined,
         email: editEmail.trim() || undefined,
         address: editAddress.trim() || undefined,
+        daily_cutoff: cutoffVal,
       })
 
       // Update state
@@ -446,6 +537,11 @@ export default function Staff({
                   <span>
                     {person.employee_code} · {person.designation} · ₹
                     {person.salary.toLocaleString("en-IN")}/mo
+                    {person.effective_daily_cutoff !== null && person.effective_daily_cutoff !== undefined && (
+                      <span style={{ marginLeft: "6px", color: person.cutoff_source === "individual" ? "var(--status-present)" : "var(--text-secondary)" }}>
+                        · ₹{person.effective_daily_cutoff}/d ({person.cutoff_source === "individual" ? "Individual" : "Agency"})
+                      </span>
+                    )}
                   </span>
                 </span>
                 <Pill tone={person.status === "active" ? "success" : "neutral"}>
@@ -563,6 +659,48 @@ export default function Staff({
                 />
               </div>
 
+              <p className="form-section-title">Daily Salary Cutoff Rule</p>
+              <div className="choice-row">
+                <button
+                  type="button"
+                  className={addCutoffMode === "agency" ? "selected" : ""}
+                  onClick={() => setAddCutoffMode("agency")}
+                >
+                  {addCutoffMode === "agency" && <Icon name="check" size={14} />}
+                  Agency Default
+                </button>
+                <button
+                  type="button"
+                  className={addCutoffMode === "custom" ? "selected" : ""}
+                  onClick={() => setAddCutoffMode("custom")}
+                >
+                  {addCutoffMode === "custom" && <Icon name="check" size={14} />}
+                  Custom Individual Cutoff
+                </button>
+              </div>
+
+              {addCutoffMode === "custom" ? (
+                <div style={{ marginTop: "10px" }}>
+                  <Field
+                    label="Individual Daily Cutoff (₹) *"
+                    type="number"
+                    placeholder="e.g. 150"
+                    min="0"
+                    step="any"
+                    value={addDailyCutoff}
+                    onChange={(e) => setAddDailyCutoff(e.target.value)}
+                    required
+                  />
+                  <span style={{ fontSize: "12px", color: "var(--text-secondary)", display: "block", marginTop: "4px" }}>
+                    Overrides the agency default cutoff for this specific employee.
+                  </span>
+                </div>
+              ) : (
+                <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginTop: "6px" }}>
+                  Will automatically inherit the agency default daily cutoff defined in Settings.
+                </p>
+              )}
+
               <div style={{ marginTop: "14px", display: "grid", gap: "8px" }}>
                 <Button block type="submit" loading={actionLoading}>
                   {actionLoading ? "Registering Employee…" : "Save Staff Member"}
@@ -621,6 +759,21 @@ export default function Staff({
                   <strong>₹{selected.salary.toLocaleString("en-IN")}</strong>
                 </div>
                 <div>
+                  <p>Daily Salary Cutoff</p>
+                  <strong>
+                    {selected.effective_daily_cutoff !== null && selected.effective_daily_cutoff !== undefined
+                      ? `₹${selected.effective_daily_cutoff} / day`
+                      : "—"}
+                  </strong>
+                  <span style={{ fontSize: "11px", display: "block", marginTop: "2px", color: selected.cutoff_source === "individual" ? "var(--status-present)" : "var(--text-secondary)" }}>
+                    {selected.cutoff_source === "individual"
+                      ? "Individual Override"
+                      : selected.cutoff_source === "agency_default"
+                      ? "Agency Default"
+                      : "Not Configured"}
+                  </span>
+                </div>
+                <div>
                   <p>Staff Status</p>
                   <strong
                     style={{
@@ -662,14 +815,140 @@ export default function Staff({
                     <strong>{selected.address}</strong>
                   </p>
                 )}
-                <p>
-                  <span>
-                    <Icon name="shield" size={16} /> Biometric Roster Status
-                  </span>
-                  <span style={{ fontSize: "12px", color: "var(--brand-blue)" }}>
-                    Ready for Face Enrollment (Phase 8)
-                  </span>
-                </p>
+              </div>
+
+              {/* Biometric Face Recognition Section (Phase 8) */}
+              <div
+                style={{
+                  marginTop: "16px",
+                  padding: "16px",
+                  background: "var(--card-subtle, rgba(255, 255, 255, 0.03))",
+                  borderRadius: "var(--radius-md, 14px)",
+                  border: "1px solid var(--border, rgba(255, 255, 255, 0.08))",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <Icon name="shield" size={18} />
+                    <strong style={{ fontSize: "14px", color: "var(--text-primary)" }}>
+                      Face Recognition
+                    </strong>
+                  </div>
+
+                  {faceStatusLoading ? (
+                    <span style={{ fontSize: "12px", color: "var(--text-secondary)" }}>
+                      Checking status…
+                    </span>
+                  ) : faceStatus?.registered ? (
+                    <span
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "4px",
+                        fontSize: "12px",
+                        fontWeight: 600,
+                        color: "var(--status-present, #10b981)",
+                        background: "rgba(16, 185, 129, 0.12)",
+                        padding: "3px 10px",
+                        borderRadius: "999px",
+                      }}
+                    >
+                      ✓ Registered
+                    </span>
+                  ) : (
+                    <span
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "4px",
+                        fontSize: "12px",
+                        fontWeight: 500,
+                        color: "var(--text-secondary, #94a3b8)",
+                        background: "rgba(148, 163, 184, 0.1)",
+                        padding: "3px 10px",
+                        borderRadius: "999px",
+                      }}
+                    >
+                      ○ Not Registered
+                    </span>
+                  )}
+                </div>
+
+                {faceError && (
+                  <p style={{ fontSize: "12px", color: "var(--status-absent, #ef4444)", marginBottom: "8px" }}>
+                    {faceError}
+                  </p>
+                )}
+
+                {faceStatus?.registered ? (
+                  <div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", background: "rgba(0,0,0,0.15)", padding: "10px 12px", borderRadius: "var(--radius-sm, 8px)", marginBottom: "12px" }}>
+                      <div>
+                        <span style={{ fontSize: "11px", color: "var(--text-secondary)", display: "block" }}>
+                          Registered on
+                        </span>
+                        <strong style={{ fontSize: "12.5px", color: "var(--text-primary)" }}>
+                          {faceStatus.created_at
+                            ? new Date(faceStatus.created_at).toLocaleDateString("en-US", {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              })
+                            : "Enrolled"}
+                        </strong>
+                      </div>
+                      <div>
+                        <span style={{ fontSize: "11px", color: "var(--text-secondary)", display: "block" }}>
+                          Captured Samples
+                        </span>
+                        <strong style={{ fontSize: "12.5px", color: "var(--text-primary)" }}>
+                          {faceStatus.sample_count || 5} samples (128-D)
+                        </strong>
+                      </div>
+                    </div>
+
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                      <Button
+                        variant="secondary"
+                        disabled={selected.status !== "active"}
+                        onClick={() => setIsFaceModalOpen(true)}
+                      >
+                        Re-register Face
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        style={{ color: "var(--status-absent, #ef4444)" }}
+                        onClick={() => setIsFaceDeleteConfirmOpen(true)}
+                      >
+                        Remove Face
+                      </Button>
+                    </div>
+
+                    {selected.status !== "active" && (
+                      <p style={{ fontSize: "11px", color: "var(--status-leave, #f59e0b)", marginTop: "6px" }}>
+                        Face re-registration is disabled while staff member is inactive.
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <div>
+                    <p style={{ fontSize: "12.5px", color: "var(--text-secondary)", marginBottom: "12px" }}>
+                      No face template enrolled yet. Capture 5 biometric angles using camera to register face.
+                    </p>
+                    <Button
+                      block
+                      disabled={selected.status !== "active"}
+                      onClick={() => setIsFaceModalOpen(true)}
+                    >
+                      Register Face
+                    </Button>
+                    {selected.status !== "active" && (
+                      <p style={{ fontSize: "11px", color: "var(--status-leave, #f59e0b)", marginTop: "6px" }}>
+                        Face registration is only available for active staff members.
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div style={{ display: "grid", gap: "10px", marginTop: "16px" }}>
@@ -803,6 +1082,48 @@ export default function Staff({
                 />
               </div>
 
+              <p className="form-section-title">Daily Salary Cutoff Rule</p>
+              <div className="choice-row">
+                <button
+                  type="button"
+                  className={editCutoffMode === "agency" ? "selected" : ""}
+                  onClick={() => setEditCutoffMode("agency")}
+                >
+                  {editCutoffMode === "agency" && <Icon name="check" size={14} />}
+                  Agency Default
+                </button>
+                <button
+                  type="button"
+                  className={editCutoffMode === "custom" ? "selected" : ""}
+                  onClick={() => setEditCutoffMode("custom")}
+                >
+                  {editCutoffMode === "custom" && <Icon name="check" size={14} />}
+                  Custom Individual Cutoff
+                </button>
+              </div>
+
+              {editCutoffMode === "custom" ? (
+                <div style={{ marginTop: "10px" }}>
+                  <Field
+                    label="Individual Daily Cutoff (₹) *"
+                    type="number"
+                    placeholder="e.g. 150"
+                    min="0"
+                    step="any"
+                    value={editDailyCutoff}
+                    onChange={(e) => setEditDailyCutoff(e.target.value)}
+                    required
+                  />
+                  <span style={{ fontSize: "12px", color: "var(--text-secondary)", display: "block", marginTop: "4px" }}>
+                    Overrides the agency default cutoff for this specific employee.
+                  </span>
+                </div>
+              ) : (
+                <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginTop: "6px" }}>
+                  Will automatically inherit the agency default daily cutoff defined in Settings.
+                </p>
+              )}
+
               <Field
                 label="Residential Address"
                 value={editAddress}
@@ -825,6 +1146,103 @@ export default function Staff({
             </form>
           )}
         </Sheet>
+      )}
+
+      {/* Face Registration Camera Modal (Phase 8) */}
+      {isFaceModalOpen && selected && (
+        <FaceRegistrationModal
+          employee={selected}
+          isOpen={isFaceModalOpen}
+          onClose={() => setIsFaceModalOpen(false)}
+          onSuccess={async () => {
+            if (selected) {
+              setFaceStatusLoading(true)
+              try {
+                const res = await faceApi.getStatus(selected.id)
+                setFaceStatus(res)
+              } catch (e) {
+                console.error("Failed to refresh face status:", e)
+              } finally {
+                setFaceStatusLoading(false)
+              }
+            }
+          }}
+        />
+      )}
+
+      {/* Face Registration Deletion Confirmation Modal */}
+      {isFaceDeleteConfirmOpen && selected && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Confirm face deletion"
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 60,
+            background: "rgba(0, 0, 0, 0.75)",
+            backdropFilter: "blur(4px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "16px",
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              maxWidth: "400px",
+              background: "var(--surface, #0f172a)",
+              border: "1px solid var(--border, #334155)",
+              borderRadius: "20px",
+              padding: "24px",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.6)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px" }}>
+              <div
+                style={{
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "50%",
+                  background: "rgba(239, 68, 68, 0.15)",
+                  color: "#ef4444",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Icon name="shield" size={18} />
+              </div>
+              <h3 style={{ fontSize: "16px", fontWeight: 700, margin: 0, color: "var(--text-primary)" }}>
+                Remove Face Registration?
+              </h3>
+            </div>
+
+            <p style={{ fontSize: "13px", color: "var(--text-secondary)", margin: "0 0 20px 0", lineHeight: "1.5" }}>
+              Remove biometric face registration for <strong>{selected.name}</strong> ({selected.employee_code})?
+              The stored 128-D facial template will be deleted. Attendance records and employee details will remain safe.
+            </p>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <Button
+                variant="ghost"
+                onClick={() => setIsFaceDeleteConfirmOpen(false)}
+                disabled={faceActionLoading}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="soft"
+                loading={faceActionLoading}
+                style={{ color: "#fff", background: "#ef4444" }}
+                onClick={handleRemoveFace}
+              >
+                {faceActionLoading ? "Removing…" : "Remove Face"}
+              </Button>
+            </div>
+          </div>
+        </div>
       )}
     </main>
   )

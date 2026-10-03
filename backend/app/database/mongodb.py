@@ -13,6 +13,9 @@ users_collection: Collection = db["users"]
 password_reset_tokens_collection: Collection = db["password_reset_tokens"]
 employees_collection: Collection = db["employees"]
 attendance_collection: Collection = db["attendance"]
+agencies_collection: Collection = db["agencies"]
+face_templates_collection: Collection = db["face_templates"]
+face_recognition_sessions_collection: Collection = db["face_recognition_sessions"]
 
 
 def init_db():
@@ -69,3 +72,32 @@ def init_db():
         )
     except Exception as e:
         print(f"Warning: could not create attendance indexes: {e}")
+
+    try:
+        # Unique index for agency configuration
+        agencies_collection.create_index([("agency_id", ASCENDING)], unique=True)
+    except Exception as e:
+        print(f"Warning: could not create agencies index: {e}")
+
+    try:
+        # Compound unique index for face templates: one active template per employee within an agency
+        face_templates_collection.create_index(
+            [("agency_id", ASCENDING), ("employee_id", ASCENDING)],
+            unique=True,
+        )
+    except Exception as e:
+        print(f"Warning: could not create face_templates index: {e}")
+
+    try:
+        # TTL index for automatic expiry of face recognition sessions (5 min)
+        face_recognition_sessions_collection.create_index(
+            [("expires_at", ASCENDING)],
+            expireAfterSeconds=0,
+        )
+        # Fast query for session verification by agency and session_id
+        face_recognition_sessions_collection.create_index(
+            [("agency_id", ASCENDING), ("session_id", ASCENDING)],
+            unique=True,
+        )
+    except Exception as e:
+        print(f"Warning: could not create face_recognition_sessions index: {e}")

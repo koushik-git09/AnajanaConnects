@@ -13,6 +13,7 @@ from app.schemas.employee import (
     EmployeeResponse,
     EmployeeUpdateRequest,
 )
+from app.services.agency_service import AgencyService
 
 
 class EmployeeService:
@@ -22,9 +23,22 @@ class EmployeeService:
         return user.get("agency_id") or "anjana_gas_agency"
 
     @staticmethod
-    def _format_employee(doc: dict) -> EmployeeResponse:
+    def _format_employee(doc: dict, agency_default_cutoff: float | None = None) -> EmployeeResponse:
         created_at = doc.get("created_at")
         updated_at = doc.get("updated_at")
+
+        raw_cutoff = doc.get("daily_cutoff")
+        daily_cutoff = float(raw_cutoff) if raw_cutoff is not None else None
+
+        if daily_cutoff is not None:
+            effective_daily_cutoff = daily_cutoff
+            cutoff_source = "individual"
+        elif agency_default_cutoff is not None:
+            effective_daily_cutoff = agency_default_cutoff
+            cutoff_source = "agency_default"
+        else:
+            effective_daily_cutoff = None
+            cutoff_source = "not_set"
 
         return EmployeeResponse(
             id=str(doc["_id"]),
@@ -38,6 +52,9 @@ class EmployeeService:
             joining_date=doc.get("joining_date", ""),
             status=doc.get("status", "active"),
             address=doc.get("address"),
+            daily_cutoff=daily_cutoff,
+            effective_daily_cutoff=effective_daily_cutoff,
+            cutoff_source=cutoff_source,
             created_at=created_at.isoformat() if hasattr(created_at, "isoformat") else str(created_at),
             updated_at=updated_at.isoformat() if hasattr(updated_at, "isoformat") else str(updated_at),
         )
@@ -76,7 +93,8 @@ class EmployeeService:
 
         total = employees_collection.count_documents(query)
         cursor = employees_collection.find(query).sort("created_at", -1).skip(skip).limit(safe_limit)
-        items = [cls._format_employee(doc) for doc in cursor]
+        agency_default_cutoff = AgencyService.get_default_daily_cutoff(agency_id)
+        items = [cls._format_employee(doc, agency_default_cutoff) for doc in cursor]
 
         total_pages = math.ceil(total / safe_limit) if total > 0 else 1
 
@@ -106,7 +124,8 @@ class EmployeeService:
                 detail="Employee not found.",
             )
 
-        return cls._format_employee(doc)
+        agency_default_cutoff = AgencyService.get_default_daily_cutoff(agency_id)
+        return cls._format_employee(doc, agency_default_cutoff)
 
     @classmethod
     def create_employee(cls, user: dict, req: EmployeeCreateRequest) -> EmployeeResponse:
@@ -132,6 +151,7 @@ class EmployeeService:
             email=req.email,
             address=req.address,
             status="active",
+            daily_cutoff=req.daily_cutoff,
         )
 
         try:
@@ -143,7 +163,8 @@ class EmployeeService:
                 detail=f"Employee code '{code}' already exists.",
             )
 
-        return cls._format_employee(doc)
+        agency_default_cutoff = AgencyService.get_default_daily_cutoff(agency_id)
+        return cls._format_employee(doc, agency_default_cutoff)
 
     @classmethod
     def update_employee(cls, user: dict, employee_id: str, req: EmployeeUpdateRequest) -> EmployeeResponse:
@@ -178,6 +199,8 @@ class EmployeeService:
             update_fields["email"] = req.email.strip().lower() if req.email else None
         if req.address is not None:
             update_fields["address"] = req.address.strip() if req.address else None
+        if "daily_cutoff" in req.model_fields_set:
+            update_fields["daily_cutoff"] = float(req.daily_cutoff) if req.daily_cutoff is not None else None
 
         if req.employee_code is not None:
             new_code = req.employee_code.strip().upper()
@@ -199,7 +222,8 @@ class EmployeeService:
             employees_collection.update_one({"_id": oid}, {"$set": update_fields})
 
         updated_doc = employees_collection.find_one({"_id": oid})
-        return cls._format_employee(updated_doc)
+        agency_default_cutoff = AgencyService.get_default_daily_cutoff(agency_id)
+        return cls._format_employee(updated_doc, agency_default_cutoff)
 
     @classmethod
     def update_status(cls, user: dict, employee_id: str, new_status: str) -> EmployeeResponse:
@@ -225,7 +249,8 @@ class EmployeeService:
         )
 
         updated_doc = employees_collection.find_one({"_id": oid})
-        return cls._format_employee(updated_doc)
+        agency_default_cutoff = AgencyService.get_default_daily_cutoff(agency_id)
+        return cls._format_employee(updated_doc, agency_default_cutoff)
 
     @classmethod
     def delete_employee(cls, user: dict, employee_id: str) -> dict:
